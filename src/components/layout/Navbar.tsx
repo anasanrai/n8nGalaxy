@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { UserButton, useUser, useAuth } from '@clerk/clerk-react';
+import { UserButton, SignInButton, SignUpButton, useUser, useAuth } from '@clerk/clerk-react';
 import { Menu, X, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
@@ -9,7 +9,7 @@ function useSafeUser() {
   try {
     return useUser();
   } catch {
-    return { isSignedIn: false as const, user: null, isLoaded: true };
+    return { isSignedIn: false as const, user: null };
   }
 }
 
@@ -17,9 +17,13 @@ function useSafeAuth() {
   try {
     return useAuth();
   } catch {
-    return { signOut: async () => {}, isLoaded: true };
+    return { signOut: async () => {} };
   }
 }
+
+const btnBase = 'h-[36px] px-4 font-sans font-medium text-[14px] rounded-input transition-colors cursor-pointer';
+const btnOutline = 'text-text-primary border border-border hover:bg-surface';
+const btnPrimary = 'text-white bg-primary hover:bg-primary-hover border-none';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -52,8 +56,6 @@ export default function Navbar() {
     { name: 'Pricing', path: '/pricing' },
   ];
 
-  // Show sign-in buttons UNLESS Clerk confirms user IS signed in.
-  // This works even when Clerk hasn't initialized (isSignedIn = undefined).
   const showLoggedOut = !isSignedIn;
 
   return (
@@ -87,18 +89,12 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {showLoggedOut ? (
             <>
-              <button
-                onClick={() => navigate('/signin')}
-                className="h-[36px] px-4 font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-surface transition-colors cursor-pointer"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => navigate('/signup')}
-                className="h-[36px] px-4 font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors cursor-pointer"
-              >
-                Get Started
-              </button>
+              <SignInButton mode="modal">
+                <button className={`${btnBase} ${btnOutline}`}>Sign In</button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className={`${btnBase} ${btnPrimary}`}>Get Started</button>
+              </SignUpButton>
             </>
           ) : (
             <div className="relative group cursor-pointer">
@@ -116,44 +112,22 @@ export default function Navbar() {
                 />
               </div>
               <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer"
-                >
-                  Dashboard
-                </button>
-                <button
-                  onClick={() => navigate('/submit')}
-                  className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer"
-                >
-                  Submit Workflow
-                </button>
+                <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
+                <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
                 {profile?.role === 'admin' && (
-                  <button
-                    onClick={() => navigate('/admin')}
-                    className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2"
-                    style={{ color: '#7C3AED' }}
-                  >
+                  <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
                     <Shield size={13} />
                     Admin Panel
                   </button>
                 )}
                 <div className="my-1 border-t border-border"></div>
-                <button
-                  onClick={() => signOut()}
-                  className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer"
-                >
-                  Sign Out
-                </button>
+                <button onClick={() => signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
               </div>
             </div>
           )}
         </div>
 
-        <button
-          className="md:hidden text-text-secondary hover:text-text-primary"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
+        <button className="md:hidden text-text-secondary hover:text-text-primary" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -161,49 +135,24 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-[64px] left-0 right-0 bg-surface border-b border-border p-4 flex flex-col gap-4 shadow-2xl">
           {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                `block px-4 py-3 rounded-input font-sans font-medium text-[15px] ${
-                  isActive ? 'bg-primary/10 text-primary' : 'text-text-secondary hover:bg-background hover:text-text-primary'
-                }`
-              }
-            >
+            <NavLink key={link.name} to={link.path} onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-input font-sans font-medium text-[15px] ${isActive ? 'bg-primary/10 text-primary' : 'text-text-secondary hover:bg-background hover:text-text-primary'}`}>
               {link.name}
             </NavLink>
           ))}
           <div className="border-t border-border my-2"></div>
           {showLoggedOut ? (
             <div className="flex flex-col gap-3 px-2">
-              <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/signin'); }}
-                className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/signup'); }}
-                className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors"
-              >
-                Get Started
-              </button>
+              <SignInButton mode="modal">
+                <button className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors">Sign In</button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors">Get Started</button>
+              </SignUpButton>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }}
-                className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/submit'); }}
-                className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary"
-              >
-                Submit Workflow
-              </button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }} className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary">Dashboard</button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/submit'); }} className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary">Submit Workflow</button>
             </div>
           )}
         </div>
