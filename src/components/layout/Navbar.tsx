@@ -58,8 +58,8 @@ export default function Navbar() {
 
   const showLoggedOut = !isSignedIn;
 
-  const handleSignIn = () => clerk?.openSignIn({ afterSignInUrl: '/dashboard' });
-  const handleSignUp = () => clerk?.openSignUp({ afterSignUpUrl: '/dashboard' });
+  const handleSignIn = () => clerk?.openSignIn({ afterSignInUrl: '/marketplace' });
+  const handleSignUp = () => clerk?.openSignUp({ afterSignUpUrl: '/marketplace' });
 
   return (
     <nav

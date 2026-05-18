@@ -1,4 +1,5 @@
 import { SignIn } from '@clerk/clerk-react';
+import { dark } from '@clerk/themes';
 import { NavLink } from 'react-router-dom';
 
 export default function SignInPage() {
@@ -15,7 +16,16 @@ export default function SignInPage() {
         routing="path"
         path="/signin"
         signUpUrl="/signup"
+        afterSignInUrl="/marketplace"
+        afterSignUpUrl="/marketplace"
         appearance={{
+          baseTheme: dark,
+          variables: {
+            colorPrimary: '#7c3aed',
+            colorBackground: '#0f0f1a',
+            colorInputBackground: '#1a1a2e',
+            colorText: '#ffffff',
+          },
           elements: {
             rootBox: { width: '100%', maxWidth: 400 },
             card: { background: '#13131F', border: '1px solid #1E1E30', borderRadius: 12, boxShadow: 'none' },

@@ -9,12 +9,12 @@ export default function Footer() {
       { name: 'Pricing', path: '/pricing' },
     ],
     Company: [
-      { name: 'About', path: '/about' },
-      { name: 'Blog', path: '/blog' },
+      { name: 'About', path: '/#' },
+      { name: 'Blog', path: '/#' },
     ],
     Legal: [
-      { name: 'Privacy', path: '/privacy' },
-      { name: 'Terms', path: '/terms' },
+      { name: 'Privacy', path: '/#' },
+      { name: 'Terms', path: '/#' },
     ],
     Connect: [
       { name: 'Twitter/X', path: '#' },
@@ -26,21 +26,14 @@ export default function Footer() {
   return (
     <footer className="bg-background border-t border-border py-12">
       <div className="max-w-[1200px] mx-auto px-6 h-full flex flex-col md:flex-row justify-between w-full">
-        {/* Left Column */}
         <div className="mb-12 md:mb-0 max-w-sm">
           <NavLink to="/" className="flex items-center space-x-0 mb-4 inline-block">
             <span className="font-sans font-medium text-text-secondary text-xl">n8n</span>
             <span className="font-display font-extrabold text-primary text-xl">Galaxy</span>
           </NavLink>
-          <p className="font-sans font-normal text-[14px] text-text-tertiary mb-6">
-            The n8n ecosystem hub
-          </p>
-          <p className="font-sans font-normal text-[14px] text-text-tertiary">
-            &copy; 2026 n8nGalaxy. All rights reserved.
-          </p>
+          <p className="font-sans font-normal text-[14px] text-text-tertiary mb-6">The n8n ecosystem hub</p>
+          <p className="font-sans font-normal text-[14px] text-text-tertiary">&copy; 2026 n8nGalaxy. All rights reserved.</p>
         </div>
-
-        {/* Right Column - Links */}
         <div className="flex-1 max-w-[800px] grid grid-cols-2 lg:grid-cols-4 gap-8">
           {Object.entries(links).map(([category, items]) => (
             <div key={category}>
@@ -48,12 +41,16 @@ export default function Footer() {
               <ul className="space-y-3">
                 {items.map((item) => (
                   <li key={item.name}>
-                    <NavLink
-                      to={item.path}
-                      className="font-sans font-normal text-[14px] text-text-secondary hover:text-text-primary transition-colors"
-                    >
-                      {item.name}
-                    </NavLink>
+                    {item.path === '#' ? (
+                      <span className="font-sans font-normal text-[14px] text-text-secondary cursor-not-allowed">{item.name}</span>
+                    ) : (
+                      <NavLink
+                        to={item.path}
+                        className="font-sans font-normal text-[14px] text-text-secondary hover:text-text-primary transition-colors"
+                      >
+                        {item.name}
+                      </NavLink>
+                    )}
                   </li>
                 ))}
               </ul>

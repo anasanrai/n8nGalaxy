@@ -66,10 +66,10 @@ export default function Home() {
           <div className="max-w-[1200px] mx-auto px-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x divide-border">
               {[
-                { number: '8,856+', label: 'Workflows' },
-                { number: '230K+', label: 'Active Users' },
-                { number: '2,000+', label: 'Courses' },
-                { number: '99%', label: 'Satisfaction Rate' },
+                { number: '50+', label: 'Workflows' },
+                { number: '500+', label: 'Community Members' },
+                { number: '10+', label: 'Courses' },
+                { number: '100%', label: 'Satisfaction Rate' },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col items-center justify-center text-center px-4">
                   <span className="font-display font-extrabold text-[32px] text-text-primary mb-1">{stat.number}</span>
@@ -113,10 +113,10 @@ export default function Home() {
               </div>
               <h3 className="font-display font-bold text-[20px] text-text-primary mb-3">Learn & Courses</h3>
               <p className="font-sans font-normal text-[15px] text-text-secondary leading-relaxed mb-6 flex-grow">
-                Step-by-step courses from beginner to advanced. Build real automation businesses with n8n.
+                Step-by-step courses from beginner to advanced. Free and Pro tracks available.
               </p>
               <div className="flex items-center justify-between w-full mt-auto">
-                <span className="font-sans font-medium text-[13px] text-accent">From $97</span>
+                <span className="font-sans font-medium text-[13px] text-accent">Free & Pro</span>
                 <button onClick={() => navigate('/learn')} className="font-sans font-medium text-[14px] text-primary hover:underline cursor-pointer flex items-center">
                   Start learning <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
                 </button>
