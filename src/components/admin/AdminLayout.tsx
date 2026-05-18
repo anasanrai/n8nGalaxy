@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Terminal, Users, DollarSign, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 
-type ActivePage = 'overview' | 'sandboxes' | 'users' | 'revenue';
+type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -11,9 +11,10 @@ interface AdminLayoutProps {
 
 const navItems: { page: ActivePage; label: string; icon: React.ReactNode; path: string }[] = [
   { page: 'overview',  label: 'Overview',  icon: <LayoutDashboard size={16} />, path: '/admin' },
-  { page: 'sandboxes', label: 'Sandboxes', icon: <Terminal size={16} />,        path: '/admin/sandboxes' },
+  { page: 'workflows', label: 'Workflows', icon: <ShoppingBag size={16} />,     path: '/admin/workflows' },
+  { page: 'courses',   label: 'Courses',   icon: <BookOpen size={16} />,        path: '/admin/courses' },
   { page: 'users',     label: 'Users',     icon: <Users size={16} />,           path: '/admin/users' },
-  { page: 'revenue',  label: 'Revenue',    icon: <DollarSign size={16} />,      path: '/admin/revenue' },
+  { page: 'revenue',   label: 'Revenue',   icon: <DollarSign size={16} />,      path: '/admin/revenue' },
 ];
 
 export default function AdminLayout({ children, activePage }: AdminLayoutProps) {
@@ -27,12 +28,10 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
 
   return (
     <div className="flex min-h-screen bg-[#0D0D14]">
-      {/* Sidebar */}
       <aside
         className="fixed left-0 top-0 h-screen w-60 flex flex-col z-40"
         style={{ background: '#0D0D14', borderRight: '1px solid #1E1E30' }}
       >
-        {/* Logo */}
         <div className="px-5 py-6" style={{ borderBottom: '1px solid #1E1E30' }}>
           <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, color: '#9CA3AF', fontSize: 18 }}>
             n8n
@@ -47,14 +46,12 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
           </p>
         </div>
 
-        {/* Nav label */}
         <div className="px-5 pt-5 pb-2">
           <p style={{ fontSize: 10, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 500 }}>
             MAIN
           </p>
         </div>
 
-        {/* Nav items */}
         <nav className="flex-1 px-3 space-y-0.5">
           {navItems.map(({ page, label, icon, path }) => {
             const isActive = activePage === page;
@@ -77,7 +74,7 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
                     ? {
                         background: 'rgba(124,58,237,0.12)',
                         color: '#7C3AED',
-                        borderRight: '3px solid #7C3AED',
+                        borderLeft: '3px solid #7C3AED',
                       }
                     : {
                         color: '#9CA3AF',
@@ -98,18 +95,17 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
           })}
         </nav>
 
-        {/* Footer: profile + logout */}
         <div className="px-4 py-5" style={{ borderTop: '1px solid #1E1E30' }}>
           <div className="flex items-center gap-3">
             <div
               className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
               style={{ background: '#7C3AED', fontSize: 12 }}
             >
-              AN
+              A
             </div>
             <div className="flex-1 min-w-0">
-              <p style={{ color: '#F4F4F8', fontSize: 13, fontWeight: 500, lineHeight: 1.3 }}>Anasan Rai</p>
-              <p style={{ color: '#6B7280', fontSize: 11 }}>Admin</p>
+              <p style={{ color: '#F4F4F8', fontSize: 13, fontWeight: 500, lineHeight: 1.3 }}>Admin</p>
+              <p style={{ color: '#6B7280', fontSize: 11 }}>n8nGalaxy</p>
             </div>
             <button
               onClick={handleSignOut}
@@ -124,8 +120,7 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="ml-60 flex-1 p-8 min-h-screen bg-[#0D0D14]">
+      <main className="ml-60 flex-1 p-6 min-h-screen bg-[#0D0D14]">
         {children}
       </main>
     </div>

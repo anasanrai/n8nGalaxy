@@ -4,15 +4,13 @@ export default function Footer() {
   const links = {
     Product: [
       { name: 'Marketplace', path: '/marketplace' },
-      { name: 'Sandbox', path: '/sandbox' },
-      { name: 'Hosting', path: '/hosting' },
       { name: 'Learn', path: '/learn' },
-      { name: 'CashPilot', path: '/cashpilot' },
+      { name: 'Community', path: '/community' },
+      { name: 'Pricing', path: '/pricing' },
     ],
     Company: [
       { name: 'About', path: '/about' },
       { name: 'Blog', path: '/blog' },
-      { name: 'Changelog', path: '/changelog' },
     ],
     Legal: [
       { name: 'Privacy', path: '/privacy' },
@@ -38,7 +36,7 @@ export default function Footer() {
             The n8n ecosystem hub
           </p>
           <p className="font-sans font-normal text-[14px] text-text-tertiary">
-            © 2026 n8nGalaxy. All rights reserved.
+            &copy; 2026 n8nGalaxy. All rights reserved.
           </p>
         </div>
 

@@ -30,7 +30,7 @@ export async function openPaddleCheckout(params: {
       displayMode: 'overlay',
       theme: 'dark',
       locale: 'en',
-      successUrl: `${window.location.origin}/sandbox/success`,
+      successUrl: `${window.location.origin}/dashboard`,
     },
   });
 }

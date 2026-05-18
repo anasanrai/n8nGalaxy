@@ -19,9 +19,9 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Marketplace', path: '/marketplace' },
-    { name: 'Sandbox', path: '/sandbox' },
-    { name: 'Hosting', path: '/hosting' },
     { name: 'Learn', path: '/learn' },
+    { name: 'Community', path: '/community' },
+    { name: 'Pricing', path: '/pricing' },
   ];
 
   const getInitials = (name?: string | null) => {
@@ -88,7 +88,13 @@ export default function Navbar() {
                 >
                   Dashboard
                 </button>
-                {(profile as (typeof profile & { role?: string }) | null)?.role === 'admin' && (
+                <button
+                  onClick={() => navigate('/submit')}
+                  className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer"
+                >
+                  Submit Workflow
+                </button>
+                {(profile as any)?.role === 'admin' && (
                   <button
                     onClick={() => navigate('/admin')}
                     className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2"
@@ -159,6 +165,12 @@ export default function Navbar() {
                 className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary"
               >
                 Dashboard
+              </button>
+              <button
+                onClick={() => { setMobileMenuOpen(false); navigate('/submit'); }}
+                className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary"
+              >
+                Submit Workflow
               </button>
               <button
                 onClick={() => { setMobileMenuOpen(false); signOut(); }}

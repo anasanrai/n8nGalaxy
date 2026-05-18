@@ -3,72 +3,72 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { openPaddleCheckout } from '../lib/paddle';
-import { GitBranch, Check, ShieldCheck, Loader2 } from 'lucide-react';
+import { GitBranch, Check, ShieldCheck, Loader2, ArrowLeft } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import type { Template, Purchase } from '../types';
+import type { Workflow, Purchase } from '../types';
 
-const PADDLE_TEMPLATE_PRICES: Record<string, string> = {
-  'real-estate-lead-capture':    import.meta.env.VITE_PADDLE_TEMPLATE_REAL_ESTATE,
-  'stripe-quickbooks-sync':      import.meta.env.VITE_PADDLE_TEMPLATE_QUICKBOOKS,
-  'ai-google-review-responder':  import.meta.env.VITE_PADDLE_TEMPLATE_GOOGLE_REVIEW,
-};
-
-export default function TemplatePage() {
+export default function WorkflowDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile: userProfile } = useAuth();
 
-  const { data: template, isLoading } = useQuery({
-    queryKey: ['template', slug],
+  const { data: workflow, isLoading, isError } = useQuery({
+    queryKey: ['workflow', slug],
     queryFn: async () => {
       if (!slug) throw new Error('No slug provided');
       const { data, error } = await supabase
-        .from('templates')
+        .from('workflows')
         .select('*')
         .eq('slug', slug)
         .single();
-      
       if (error) throw error;
-      return data as Template;
+      return data as Workflow;
     },
     enabled: !!slug,
   });
 
   const { data: purchase } = useQuery({
-    queryKey: ['purchase', template?.id, user?.id],
+    queryKey: ['purchase', workflow?.id, user?.id],
     queryFn: async () => {
-      if (!user || !template) return null;
+      if (!user || !workflow) return null;
       const { data } = await supabase
         .from('purchases')
         .select('*')
         .eq('user_id', user.id)
-        .eq('template_id', template.id)
+        .eq('workflow_id', workflow.id)
         .maybeSingle();
-      
       return data as Purchase | null;
     },
-    enabled: !!user && !!template,
+    enabled: !!user && !!workflow,
   });
 
   const handleBuy = async () => {
     if (!user) {
-      navigate('/auth', { state: { returnTo: `/template/${template?.slug}` } });
+      navigate('/auth', { state: { returnTo: `/workflow/${workflow?.slug}` } });
       return;
     }
 
     if (purchase) {
-      if (purchase.download_url && new Date(purchase.download_expires_at!) > new Date()) {
+      if (purchase.download_url) {
         window.open(purchase.download_url, '_blank');
-      } else {
-        alert('Download link expired. Contact support to re-download.');
       }
       return;
     }
 
-    const priceId = PADDLE_TEMPLATE_PRICES[template?.slug || ''];
+    if (workflow && workflow.price_cents === 0) {
+      await supabase.from('purchases').insert({
+        user_id: user.id,
+        workflow_id: workflow.id,
+        amount_cents: 0,
+        status: 'completed',
+      } as never);
+      return;
+    }
+
+    const priceId = workflow?.paddle_price_id;
     if (!priceId) {
-      alert('Price not configured for this template');
+      alert('Not configured for purchase');
       return;
     }
 
@@ -77,11 +77,11 @@ export default function TemplatePage() {
         priceId,
         userId: user.id,
         userEmail: user.email || '',
-        userName: profile?.full_name || '',
+        userName: userProfile?.full_name || '',
         customData: {
           user_id: user.id,
-          template_id: template?.id || '',
-          type: 'template',
+          workflow_id: workflow?.id || '',
+          type: 'workflow',
         },
       });
     } catch (err) {
@@ -118,12 +118,15 @@ export default function TemplatePage() {
     );
   }
 
-  if (!template) {
+  if (isError || !workflow) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="font-display font-bold text-[32px] text-text-primary mb-4">Template not found</h1>
-        <Link to="/marketplace" className="text-primary hover:underline font-sans font-medium text-[16px]">
-          ← Back to Marketplace
+        <h1 className="font-display font-bold text-[32px] text-text-primary mb-4">
+          {isError ? 'Something went wrong' : 'Workflow not found'}
+        </h1>
+        <Link to="/marketplace" className="text-primary hover:underline font-sans font-medium text-[16px] inline-flex items-center gap-1">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Marketplace
         </Link>
       </div>
     );
@@ -135,21 +138,22 @@ export default function TemplatePage() {
 
       <main className="flex-1 pt-[144px] pb-[96px] px-6 bg-background">
         <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 relative items-start">
-          
+
           {/* Left Column - Details */}
           <div className="w-full lg:w-[60%] lg:shrink-0 flex flex-col relative">
-            <Link 
-              to="/marketplace" 
-              className="inline-block font-sans font-normal text-[14px] text-text-secondary hover:text-text-primary transition-colors mb-8 w-fit"
+            <Link
+              to="/marketplace"
+              className="inline-flex items-center gap-1 font-sans font-normal text-[14px] text-text-secondary hover:text-text-primary transition-colors mb-8 w-fit"
             >
-              ← Back to Marketplace
+              <ArrowLeft className="w-4 h-4" />
+              Back to Marketplace
             </Link>
 
             <div className="flex flex-wrap gap-2 mb-3">
-              <span className={`inline-flex items-center px-[10px] h-[24px] rounded-pill border font-sans font-medium text-[11px] uppercase tracking-wider ${getCategoryColor(template.category)}`}>
-                {formatCategory(template.category)}
+              <span className={`inline-flex items-center px-[10px] h-[24px] rounded-pill border font-sans font-medium text-[11px] uppercase tracking-wider ${getCategoryColor(workflow.category)}`}>
+                {formatCategory(workflow.category)}
               </span>
-              {template.featured && (
+              {workflow.featured && (
                 <span className="inline-flex items-center px-[10px] h-[24px] rounded-pill border border-primary bg-primary text-white font-sans font-medium text-[11px] uppercase tracking-wider">
                   FEATURED
                 </span>
@@ -157,11 +161,11 @@ export default function TemplatePage() {
             </div>
 
             <h1 className="font-display font-extrabold text-[40px] text-text-primary leading-tight mt-3">
-              {template.title}
+              {workflow.title}
             </h1>
 
             <div className="mt-8 font-sans font-normal text-[16px] text-text-secondary leading-[1.7] whitespace-pre-wrap shrink-0">
-              {template.description}
+              {workflow.description}
             </div>
 
             <hr className="w-full border-t border-border my-8" />
@@ -171,10 +175,10 @@ export default function TemplatePage() {
             </h3>
             <ul className="space-y-3 mb-8">
               {[
-                "Complete workflow JSON file",
-                "Setup documentation",
-                "Node-by-node breakdown",
-                "Free updates"
+                'Complete workflow JSON file',
+                'Setup documentation',
+                'Node-by-node breakdown',
+                'Free updates',
               ].map(item => (
                 <li key={item} className="flex items-center gap-3">
                   <Check className="w-[16px] h-[16px] text-accent shrink-0" />
@@ -187,7 +191,7 @@ export default function TemplatePage() {
               Tools used
             </h3>
             <div className="flex flex-wrap gap-2 mb-8">
-              {template.tools.map(tool => (
+              {workflow.tools.map(tool => (
                 <span key={tool} className="inline-flex items-center px-3 py-1 rounded-[6px] border border-border bg-background font-sans font-medium text-[13px] text-text-tertiary">
                   {tool}
                 </span>
@@ -201,7 +205,7 @@ export default function TemplatePage() {
               {[
                 { title: 'Purchase', desc: 'Complete checkout. Instant order confirmation.' },
                 { title: 'Download', desc: 'Get your workflow JSON file immediately via email & dashboard.' },
-                { title: 'Import', desc: 'Open n8n, click Import, paste JSON. Done in 30 seconds.' }
+                { title: 'Import', desc: 'Open n8n, click Import, paste JSON. Done in 30 seconds.' },
               ].map((step, idx) => (
                 <div key={idx} className="flex flex-row items-start gap-4">
                   <div className="w-[36px] h-[36px] rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center shrink-0 font-sans font-bold text-[14px] text-primary">
@@ -221,9 +225,9 @@ export default function TemplatePage() {
             <div className="w-full max-w-[400px] bg-surface border border-border rounded-card p-8 flex flex-col gap-6">
               <div className="flex flex-col">
                 <span className="font-display font-extrabold text-[48px] text-text-primary">
-                  {template.price_cents === 0 ? 'Free' : `$${(template.price_cents / 100).toLocaleString('en-US', { minimumFractionDigits: template.price_cents % 100 === 0 ? 0 : 2 })}`}
+                  {workflow.price_cents === 0 ? 'Free' : `$${(workflow.price_cents / 100).toLocaleString('en-US', { minimumFractionDigits: workflow.price_cents % 100 === 0 ? 0 : 2 })}`}
                 </span>
-                {template.price_cents > 0 && (
+                {workflow.price_cents > 0 && (
                   <span className="font-sans font-normal text-[13px] text-text-tertiary">
                     One-time purchase. Lifetime access.
                   </span>
@@ -232,17 +236,17 @@ export default function TemplatePage() {
 
               <div className="flex items-center gap-2 text-text-secondary">
                 <GitBranch size={14} />
-                <span className="font-sans font-normal text-[14px]">{template.node_count} nodes</span>
+                <span className="font-sans font-normal text-[14px]">{workflow.node_count} nodes</span>
               </div>
 
               <hr className="border-t border-border w-full" />
 
               <ul className="space-y-3">
                 {[
-                  "Instant download after purchase",
-                  "n8n workflow JSON file",
-                  "Works with n8n Cloud + self-hosted",
-                  "Free updates included"
+                  'Instant download after purchase',
+                  'n8n workflow JSON file',
+                  'Works with n8n Cloud + self-hosted',
+                  'Free updates included',
                 ].map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <Check className="w-4 h-4 text-primary mt-1 shrink-0" />
@@ -255,18 +259,23 @@ export default function TemplatePage() {
                 <button
                   onClick={handleBuy}
                   className={`w-full h-[52px] rounded-input font-sans font-semibold text-[16px] transition-colors cursor-pointer flex items-center justify-center ${
-                    purchase 
-                      ? 'bg-surface border border-border text-text-primary hover:border-primary' 
-                      : template.price_cents === 0 
-                        ? 'bg-accent hover:bg-accent-dim text-background' 
-                        : 'bg-primary hover:bg-primary-hover text-white'
+                    purchase
+                      ? 'bg-surface border border-border text-text-primary hover:border-primary'
+                      : !user
+                        ? 'bg-primary hover:bg-primary-hover text-white'
+                        : workflow.price_cents === 0
+                          ? 'bg-accent hover:bg-accent-dim text-background'
+                          : 'bg-primary hover:bg-primary-hover text-white'
                   }`}
                 >
-                  {purchase ? 'Download Again' : template.price_cents === 0 ? 'Download Free' : 'Buy Now'}
+                  {!user && 'Sign in to Purchase'}
+                  {user && purchase && 'Download Again'}
+                  {user && !purchase && workflow.price_cents === 0 && 'Download Free'}
+                  {user && !purchase && workflow.price_cents > 0 && 'Buy Now'}
                 </button>
                 <div className="flex items-center justify-center gap-1.5 mt-3 text-text-tertiary">
                   <ShieldCheck size={12} />
-                  <span className="font-sans font-normal text-[12px]">Secure checkout via LemonSqueezy</span>
+                  <span className="font-sans font-normal text-[12px]">Secure checkout via Paddle</span>
                 </div>
               </div>
             </div>

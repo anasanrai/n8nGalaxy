@@ -2,27 +2,25 @@ import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
-import { supabase } from './lib/supabase';
 import { Spinner } from './components/ui/Spinner';
 
 import Home from './pages/Home';
 import Marketplace from './pages/Marketplace';
-import Sandbox from './pages/Sandbox';
-import SandboxSuccess from './pages/SandboxSuccess';
-import Hosting from './pages/Hosting';
 import Learn from './pages/Learn';
-import Dashboard from './pages/Dashboard';
+import Pricing from './pages/Pricing';
+import Community from './pages/Community';
 import Auth from './pages/Auth';
-import TemplatePage from './pages/TemplatePage';
-import CashPilot from './pages/CashPilot';
-import SandboxSession from './pages/SandboxSession';
+import Dashboard from './pages/Dashboard';
+import WorkflowDetail from './pages/WorkflowDetail';
+import CourseDetail from './pages/CourseDetail';
+import SubmitWorkflow from './pages/SubmitWorkflow';
 import AdminRoute from './components/admin/AdminRoute';
 
-// Lazy-load admin pages (admin bundle stays separate)
-const AdminOverview  = lazy(() => import('./pages/admin/AdminOverview'));
-const AdminSandboxes = lazy(() => import('./pages/admin/AdminSandboxes'));
-const AdminUsers     = lazy(() => import('./pages/admin/AdminUsers'));
-const AdminRevenue   = lazy(() => import('./pages/admin/AdminRevenue'));
+const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
+const AdminWorkflows = lazy(() => import('./pages/admin/AdminWorkflows'));
+const AdminCourses = lazy(() => import('./pages/admin/AdminCourses'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminRevenue = lazy(() => import('./pages/admin/AdminRevenue'));
 
 const queryClient = new QueryClient();
 
@@ -46,18 +44,6 @@ function App() {
     initialize();
   }, [initialize]);
 
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes('access_token')) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          useAuthStore.getState().initialize();
-          window.history.replaceState(null, '', window.location.pathname);
-        }
-      });
-    }
-  }, []);
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -72,14 +58,20 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/template/:slug" element={<TemplatePage />} />
-          <Route path="/sandbox" element={<Sandbox />} />
-          <Route path="/sandbox/success" element={<SandboxSuccess />} />
-          <Route path="/sandbox/cancel" element={<Navigate to="/sandbox" replace />} />
-          <Route path="/hosting" element={<Hosting />} />
+          <Route path="/workflow/:slug" element={<WorkflowDetail />} />
           <Route path="/learn" element={<Learn />} />
-          <Route path="/cashpilot" element={<CashPilot />} />
+          <Route path="/course/:slug" element={<CourseDetail />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/auth" element={<Auth />} />
+          <Route
+            path="/submit"
+            element={
+              <ProtectedRoute>
+                <SubmitWorkflow />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={
@@ -88,16 +80,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/sandbox/session/:sessionId"
-            element={
-              <ProtectedRoute>
-                <SandboxSession />
-              </ProtectedRoute>
-            }
-          />
 
-          {/* ── Admin routes ────────────────────────────────────── */}
+          {/* Admin routes */}
           <Route
             path="/admin"
             element={
@@ -111,12 +95,24 @@ function App() {
             }
           />
           <Route
-            path="/admin/sandboxes"
+            path="/admin/workflows"
             element={
               <ProtectedRoute>
                 <AdminRoute>
                   <Suspense fallback={<AdminSpinner />}>
-                    <AdminSandboxes />
+                    <AdminWorkflows />
+                  </Suspense>
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/courses"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Suspense fallback={<AdminSpinner />}>
+                    <AdminCourses />
                   </Suspense>
                 </AdminRoute>
               </ProtectedRoute>
