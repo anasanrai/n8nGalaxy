@@ -59,7 +59,7 @@ export default function Pricing() {
 
   const handleSubscribe = async (plan: typeof plans[number]) => {
     if (!isAuthenticated) {
-      navigate('/auth', { state: { returnTo: '/pricing' } });
+      navigate('/signin');
       return;
     }
 
@@ -70,7 +70,7 @@ export default function Pricing() {
         priceId: plan.priceId,
         userId: user!.id,
         userEmail: user!.email!,
-        userName: user!.user_metadata?.full_name || user!.email || '',
+        userName: user!.email || '',
         customData: {
           user_id: user!.id,
           plan: plan.planKey,

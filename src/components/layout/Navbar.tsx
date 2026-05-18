@@ -1,13 +1,25 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/clerk-react';
 import { Menu, X, Shield } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../../lib/supabase';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated, profile, signOut } = useAuth();
+  const { user, isSignedIn } = useUser();
   const navigate = useNavigate();
+
+  const { data: profile } = useQuery<any>({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+      return data ?? null;
+    },
+    enabled: !!isSignedIn && !!user?.id,
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,11 +35,6 @@ export default function Navbar() {
     { name: 'Community', path: '/community' },
     { name: 'Pricing', path: '/pricing' },
   ];
-
-  const getInitials = (name?: string | null) => {
-    if (!name) return 'U';
-    return name.substring(0, 2).toUpperCase();
-  };
 
   return (
     <nav
@@ -61,26 +68,33 @@ export default function Navbar() {
 
         {/* Right: Auth / Profile */}
         <div className="hidden md:flex items-center gap-4">
-          {!isAuthenticated ? (
-            <>
-              <button
-                onClick={() => navigate('/auth')}
-                className="h-[36px] px-4 font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-surface transition-colors cursor-pointer"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => navigate('/auth')}
-                className="h-[36px] px-4 font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors cursor-pointer"
-              >
-                Get Started
-              </button>
-            </>
-          ) : (
+          <SignedOut>
+            <button
+              onClick={() => navigate('/signin')}
+              className="h-[36px] px-4 font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-surface transition-colors cursor-pointer"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => navigate('/signup')}
+              className="h-[36px] px-4 font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors cursor-pointer"
+            >
+              Get Started
+            </button>
+          </SignedOut>
+          <SignedIn>
             <div className="relative group cursor-pointer">
-              <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center text-text-primary font-sans font-medium shadow-[0_0_15px_rgba(124,58,237,0.15)]">
-                {getInitials(profile?.full_name)}
-              </div>
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: { width: 32, height: 32, border: '2px solid rgba(124,58,237,0.3)' },
+                    userButtonPopoverCard: { background: '#13131F', border: '1px solid #1E1E30' },
+                    userButtonPopoverActionButton: { color: '#F4F4F8' },
+                    userButtonPopoverActionButtonText: { color: '#F4F4F8' },
+                    userButtonPopoverFooter: { display: 'none' },
+                  },
+                }}
+              />
               <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 <button
                   onClick={() => navigate('/dashboard')}
@@ -94,7 +108,7 @@ export default function Navbar() {
                 >
                   Submit Workflow
                 </button>
-                {(profile as any)?.role === 'admin' && (
+                {profile?.role === 'admin' && (
                   <button
                     onClick={() => navigate('/admin')}
                     className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2"
@@ -106,14 +120,14 @@ export default function Navbar() {
                 )}
                 <div className="my-1 border-t border-border"></div>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => navigate('/dashboard')}
                   className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer"
                 >
                   Sign Out
                 </button>
               </div>
             </div>
-          )}
+          </SignedIn>
         </div>
 
         {/* Mobile Hamburger */}
@@ -143,22 +157,23 @@ export default function Navbar() {
             </NavLink>
           ))}
           <div className="border-t border-border my-2"></div>
-          {!isAuthenticated ? (
+          <SignedOut>
             <div className="flex flex-col gap-3 px-2">
               <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/auth'); }}
+                onClick={() => { setMobileMenuOpen(false); navigate('/signin'); }}
                 className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors"
               >
                 Sign In
               </button>
               <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/auth'); }}
+                onClick={() => { setMobileMenuOpen(false); navigate('/signup'); }}
                 className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors"
               >
                 Get Started
               </button>
             </div>
-          ) : (
+          </SignedOut>
+          <SignedIn>
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }}
@@ -172,14 +187,8 @@ export default function Navbar() {
               >
                 Submit Workflow
               </button>
-              <button
-                onClick={() => { setMobileMenuOpen(false); signOut(); }}
-                className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-danger hover:bg-background"
-              >
-                Sign Out
-              </button>
             </div>
-          )}
+          </SignedIn>
         </div>
       )}
     </nav>

@@ -53,7 +53,7 @@ export default function CourseDetail() {
 
   const handleBuy = async () => {
     if (!user) {
-      navigate('/auth', { state: { returnTo: `/course/${course?.slug}` } });
+      navigate('/signin');
       return;
     }
     if (purchase) return;

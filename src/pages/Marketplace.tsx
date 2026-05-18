@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Workflow } from '../types';
-import { useAuthStore } from '../stores/authStore';
+import { useUser } from '@clerk/clerk-react';
 import { GitBranch } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -22,19 +22,11 @@ const CATEGORIES = [
 
 const SORT_OPTIONS = ['Featured', 'Price: Low', 'Price: High', 'Newest'];
 
-function getInitials(name?: string | null): string {
-  if (!name) return 'U';
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return name.substring(0, 2).toUpperCase();
-}
-
 export default function Marketplace() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('Featured');
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const profile = useAuthStore((s) => s.profile);
+  const { isSignedIn } = useUser();
 
   const { data: workflows, isLoading } = useQuery({
     queryKey: ['workflows'],
@@ -205,40 +197,17 @@ export default function Marketplace() {
             ))}
           </select>
 
-          {user ? (
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                background: '#1E1E30',
-                border: '0.5px solid #2A2A3E',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: 11,
-                color: '#F4F4F8',
-                flexShrink: 0,
-              }}
+          {isSignedIn ? (
+            <div 
+              style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E1E30', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#F4F4F8' }}
               onClick={() => navigate('/dashboard')}
-              title={profile?.full_name || 'Dashboard'}
             >
-              {getInitials(profile?.full_name)}
+              U
             </div>
           ) : (
-            <span
-              onClick={() =>
-                navigate('/auth', { state: { returnTo: '/marketplace' } })
-              }
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: 12,
-                color: '#9CA3AF',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
+            <span 
+              onClick={() => navigate('/signin')}
+              style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#9CA3AF', cursor: 'pointer' }}
             >
               Sign in
             </span>

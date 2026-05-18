@@ -45,7 +45,7 @@ export default function WorkflowDetail() {
 
   const handleBuy = async () => {
     if (!user) {
-      navigate('/auth', { state: { returnTo: `/workflow/${workflow?.slug}` } });
+      navigate('/signin');
       return;
     }
 

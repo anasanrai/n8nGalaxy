@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
 
 type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue';
 
@@ -18,12 +18,12 @@ const navItems: { page: ActivePage; label: string; icon: React.ReactNode; path: 
 ];
 
 export default function AdminLayout({ children, activePage }: AdminLayoutProps) {
-  const signOut = useAuthStore((s) => s.signOut);
+  const { signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/auth');
+    navigate('/');
   };
 
   return (
@@ -96,17 +96,8 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
         </nav>
 
         <div className="px-4 py-5" style={{ borderTop: '1px solid #1E1E30' }}>
-          <div className="flex items-center gap-3">
-            <div
-              className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-              style={{ background: '#7C3AED', fontSize: 12 }}
-            >
-              A
-            </div>
-            <div className="flex-1 min-w-0">
-              <p style={{ color: '#F4F4F8', fontSize: 13, fontWeight: 500, lineHeight: 1.3 }}>Admin</p>
-              <p style={{ color: '#6B7280', fontSize: 11 }}>n8nGalaxy</p>
-            </div>
+          <div className="flex items-center justify-between">
+            <span style={{ color: '#9CA3AF', fontSize: 12 }}>Admin</span>
             <button
               onClick={handleSignOut}
               title="Sign out"

@@ -1,52 +1,33 @@
-import { useAuthStore } from '../stores/authStore';
+import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
 export function useAuth() {
-  const { user, profile, loading, signOut } = useAuthStore();
+  const { isSignedIn, user, isLoaded } = useUser();
+  const { signOut: clerkSignOut } = useClerkAuth();
 
-  const isAuthenticated = !!user;
-
-  const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
-    if (error) throw error;
-  };
-
-  const signInWithEmail = async (email: string, pass: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password: pass,
-    });
-    if (error) throw error;
-    return data;
-  };
-
-  const signUpWithEmail = async (email: string, pass: string, name: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: pass,
-      options: {
-        data: {
-          full_name: name,
-        },
-      },
-    });
-    if (error) throw error;
-    return data;
-  };
+  const { data: profile } = useQuery<any>({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+      return data ?? null;
+    },
+    enabled: isSignedIn && !!user?.id,
+  });
 
   return {
-    user,
-    profile,
-    loading,
-    isAuthenticated,
-    signInWithGoogle,
-    signInWithEmail,
-    signUpWithEmail,
-    signOut,
+    user: isSignedIn ? { id: user!.id, email: user!.primaryEmailAddress?.emailAddress } : null,
+    profile: profile ?? null,
+    loading: !isLoaded,
+    isAuthenticated: !!isSignedIn,
+    signOut: async () => { await clerkSignOut(); },
+    signInWithGoogle: async () => {},
+    signInWithEmail: async () => {},
+    signUpWithEmail: async () => {},
   };
 }

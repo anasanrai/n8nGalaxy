@@ -1,7 +1,7 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthStore } from './stores/authStore';
+import { useAuth } from './hooks/useAuth';
 import { Spinner } from './components/ui/Spinner';
 
 import Home from './pages/Home';
@@ -9,7 +9,8 @@ import Marketplace from './pages/Marketplace';
 import Learn from './pages/Learn';
 import Pricing from './pages/Pricing';
 import Community from './pages/Community';
-import Auth from './pages/Auth';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
 import Dashboard from './pages/Dashboard';
 import WorkflowDetail from './pages/WorkflowDetail';
 import CourseDetail from './pages/CourseDetail';
@@ -25,8 +26,9 @@ const AdminRevenue = lazy(() => import('./pages/admin/AdminRevenue'));
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const user = useAuthStore((state) => state.user);
-  if (!user) return <Navigate to="/auth" replace />;
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><Spinner size="lg" /></div>;
+  if (!isAuthenticated) return <Navigate to="/signin" replace />;
   return children;
 }
 
@@ -37,21 +39,6 @@ const AdminSpinner = () => (
 );
 
 function App() {
-  const initialize = useAuthStore((state) => state.initialize);
-  const loading = useAuthStore((state) => state.loading);
-
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -63,7 +50,10 @@ function App() {
           <Route path="/course/:slug" element={<CourseDetail />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/community" element={<Community />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/signin/*" element={<SignInPage />} />
+          <Route path="/signup/*" element={<SignUpPage />} />
           <Route
             path="/submit"
             element={

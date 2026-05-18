@@ -1,5 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../../stores/authStore';
+import { useUser } from '@clerk/clerk-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../../lib/supabase';
 import { Spinner } from '../ui/Spinner';
 
 interface AdminRouteProps {
@@ -7,10 +9,19 @@ interface AdminRouteProps {
 }
 
 export default function AdminRoute({ children }: AdminRouteProps) {
-  const profile = useAuthStore((s) => s.profile);
-  const loading = useAuthStore((s) => s.loading);
+  const { isSignedIn, user, isLoaded } = useUser();
 
-  if (loading) {
+  const { data: profile, isLoading } = useQuery<any>({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+      return data ?? null;
+    },
+    enabled: !!isSignedIn && !!user?.id,
+  });
+
+  if (!isLoaded || isLoading) {
     return (
       <div className="min-h-screen bg-[#0D0D14] flex items-center justify-center">
         <Spinner size="lg" />
@@ -18,10 +29,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
     );
   }
 
-  // Cast to include role field added via migration
-  const role = (profile as (typeof profile & { role?: string }) | null)?.role;
-
-  if (!profile || role !== 'admin') {
+  if (!profile || profile.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }
 
