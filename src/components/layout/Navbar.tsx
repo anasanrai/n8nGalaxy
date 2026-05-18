@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { UserButton, SignInButton, SignUpButton, useUser, useAuth } from '@clerk/clerk-react';
+import { UserButton, useUser, useClerk, ClerkLoaded, ClerkLoading, ClerkFailed } from '@clerk/clerk-react';
 import { Menu, X, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
@@ -13,11 +13,11 @@ function useSafeUser() {
   }
 }
 
-function useSafeAuth() {
+function useSafeClerk() {
   try {
-    return useAuth();
+    return useClerk();
   } catch {
-    return { signOut: async () => {} };
+    return null;
   }
 }
 
@@ -31,7 +31,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const { isSignedIn, user } = useSafeUser();
-  const { signOut } = useSafeAuth();
+  const clerk = useSafeClerk();
 
   const { data: profile } = useQuery<any>({
     queryKey: ['profile', user?.id],
@@ -57,6 +57,9 @@ export default function Navbar() {
   ];
 
   const showLoggedOut = !isSignedIn;
+
+  const handleSignIn = () => clerk?.openSignIn({ afterSignInUrl: '/dashboard' });
+  const handleSignUp = () => clerk?.openSignUp({ afterSignUpUrl: '/dashboard' });
 
   return (
     <nav
@@ -88,42 +91,54 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           {showLoggedOut ? (
-            <>
-              <SignInButton mode="modal">
-                <button className={`${btnBase} ${btnOutline}`}>Sign In</button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className={`${btnBase} ${btnPrimary}`}>Get Started</button>
-              </SignUpButton>
-            </>
+            <ClerkLoading>
+              <div className="flex items-center gap-4">
+                <div className="w-[84px] h-[36px] rounded-input bg-surface/50 animate-pulse" />
+                <div className="w-[116px] h-[36px] rounded-input bg-surface/50 animate-pulse" />
+              </div>
+            </ClerkLoading>
+          ) : null}
+          {showLoggedOut ? (
+            <ClerkLoaded>
+              <button onClick={handleSignIn} className={`${btnBase} ${btnOutline}`}>Sign In</button>
+              <button onClick={handleSignUp} className={`${btnBase} ${btnPrimary}`}>Get Started</button>
+            </ClerkLoaded>
+          ) : null}
+          {showLoggedOut ? (
+            <ClerkFailed>
+              <button onClick={() => navigate('/signin')} className={`${btnBase} ${btnOutline}`}>Sign In</button>
+              <button onClick={() => navigate('/signup')} className={`${btnBase} ${btnPrimary}`}>Get Started</button>
+            </ClerkFailed>
           ) : (
-            <div className="relative group cursor-pointer">
-              <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: { width: 32, height: 32 },
-                      userButtonPopoverCard: { background: '#13131F', border: '1px solid #1E1E30' },
-                      userButtonPopoverActionButton: { color: '#F4F4F8' },
-                      userButtonPopoverActionButtonText: { color: '#F4F4F8' },
-                      userButtonPopoverFooter: { display: 'none' },
-                    },
-                  }}
-                />
+            <ClerkLoaded>
+              <div className="relative group cursor-pointer">
+                <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden">
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: { width: 32, height: 32 },
+                        userButtonPopoverCard: { background: '#13131F', border: '1px solid #1E1E30' },
+                        userButtonPopoverActionButton: { color: '#F4F4F8' },
+                        userButtonPopoverActionButtonText: { color: '#F4F4F8' },
+                        userButtonPopoverFooter: { display: 'none' },
+                      },
+                    }}
+                  />
+                </div>
+                <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
+                  <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
+                  {profile?.role === 'admin' && (
+                    <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
+                      <Shield size={13} />
+                      Admin Panel
+                    </button>
+                  )}
+                  <div className="my-1 border-t border-border"></div>
+                  <button onClick={() => clerk?.signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
+                </div>
               </div>
-              <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
-                <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
-                {profile?.role === 'admin' && (
-                  <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
-                    <Shield size={13} />
-                    Admin Panel
-                  </button>
-                )}
-                <div className="my-1 border-t border-border"></div>
-                <button onClick={() => signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
-              </div>
-            </div>
+            </ClerkLoaded>
           )}
         </div>
 
@@ -142,12 +157,8 @@ export default function Navbar() {
           <div className="border-t border-border my-2"></div>
           {showLoggedOut ? (
             <div className="flex flex-col gap-3 px-2">
-              <SignInButton mode="modal">
-                <button className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors">Sign In</button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors">Get Started</button>
-              </SignUpButton>
+              <button onClick={() => { setMobileMenuOpen(false); handleSignIn(); }} className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors">Sign In</button>
+              <button onClick={() => { setMobileMenuOpen(false); handleSignUp(); }} className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors">Get Started</button>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
