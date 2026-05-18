@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useUser, useAuth, SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
-import { Menu, X, Shield, Loader2 } from 'lucide-react';
+import { Menu, X, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 
@@ -29,9 +29,9 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const clerkEnabled = !!clerkKey;
-  const clerkUser = clerkEnabled ? useUser() : { isSignedIn: false, user: null, isLoaded: true };
+  const clerkUser = clerkEnabled ? useUser() : { isSignedIn: false, user: null };
   const clerkAuth = clerkEnabled ? useAuth() : { signOut: async () => {} };
-  const { isSignedIn, user, isLoaded } = clerkUser;
+  const { isSignedIn, user } = clerkUser;
 
   const { data: profile } = useQuery<any>({
     queryKey: ['profile', user?.id],
@@ -122,33 +122,27 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {!isLoaded ? (
-            <Loader2 size={18} className="animate-spin text-text-secondary" />
-          ) : (
-            <>
-              <SignedOut>
-                <button onClick={() => navigate('/signin')} className="h-[36px] px-4 font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-surface transition-colors cursor-pointer">Sign In</button>
-                <button onClick={() => navigate('/signup')} className="h-[36px] px-4 font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors cursor-pointer">Get Started</button>
-              </SignedOut>
-              <SignedIn>
-                <div className="relative group cursor-pointer">
-                  <ClerkUserButton />
-                  <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
-                    <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
-                    {profile?.role === 'admin' && (
-                      <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
-                        <Shield size={13} />
-                        Admin Panel
-                      </button>
-                    )}
-                    <div className="my-1 border-t border-border"></div>
-                    <button onClick={() => clerkAuth.signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
-                  </div>
-                </div>
-              </SignedIn>
-            </>
-          )}
+          <SignedOut>
+            <button onClick={() => navigate('/signin')} className="h-[36px] px-4 font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-surface transition-colors cursor-pointer">Sign In</button>
+            <button onClick={() => navigate('/signup')} className="h-[36px] px-4 font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors cursor-pointer">Get Started</button>
+          </SignedOut>
+          <SignedIn>
+            <div className="relative group cursor-pointer">
+              <ClerkUserButton />
+              <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
+                <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
+                {profile?.role === 'admin' && (
+                  <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
+                    <Shield size={13} />
+                    Admin Panel
+                  </button>
+                )}
+                <div className="my-1 border-t border-border"></div>
+                <button onClick={() => clerkAuth.signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
+              </div>
+            </div>
+          </SignedIn>
         </div>
 
         <button className="md:hidden text-text-secondary hover:text-text-primary" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
