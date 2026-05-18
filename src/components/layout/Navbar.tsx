@@ -5,9 +5,6 @@ import { Menu, X, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 
-const clerkKey: string | undefined = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-const clerkEnabled = !!clerkKey;
-
 function useSafeUser() {
   try {
     return useUser();
