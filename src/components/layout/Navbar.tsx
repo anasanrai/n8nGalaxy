@@ -4,6 +4,7 @@ import { UserButton, useClerk, useUser, SignedIn, SignedOut } from '@clerk/clerk
 import { Menu, X, Shield, LayoutDashboard } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
+import type { Profile } from '../../types';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -12,7 +13,7 @@ export default function Navbar() {
   const { openSignIn, openSignUp } = useClerk();
   const { user } = useUser();
 
-  const { data: profile } = useQuery<any>({
+  const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;

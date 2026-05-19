@@ -90,7 +90,7 @@ function WorkflowFormModal({ workflow, onClose, onSaved }: WorkflowFormModalProp
         status,
       };
 
-      const table = supabase.from('workflows') as any;
+      const table = supabase.from('workflows');
       if (workflow?.id) {
         const { error } = await table.update(payload).eq('id', workflow.id);
         if (error) throw error;
@@ -372,7 +372,7 @@ export default function AdminWorkflows() {
 
   const togglePublish = useCallback(async (w: Workflow) => {
     try {
-      const { error } = await (supabase.from('workflows') as any)
+      const { error } = await supabase.from('workflows')
         .update({ published: !w.published })
         .eq('id', w.id);
       if (error) throw error;
@@ -384,7 +384,7 @@ export default function AdminWorkflows() {
 
   const handleDelete = useCallback(async (id: string) => {
     try {
-      const { error } = await (supabase.from('workflows') as any).delete().eq('id', id);
+      const { error } = await supabase.from('workflows').delete().eq('id', id);
       if (error) throw error;
       invalidate();
     } catch (err) {

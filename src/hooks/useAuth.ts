@@ -1,12 +1,13 @@
 import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import type { Profile } from '../types';
 
 export function useAuth() {
   const { isSignedIn, user, isLoaded } = useUser();
   const { signOut: clerkSignOut } = useClerkAuth();
 
-  const { data: profile } = useQuery<any>({
+  const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;

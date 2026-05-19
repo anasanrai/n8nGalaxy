@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
+import type { Profile } from '../../types';
 import { Spinner } from '../ui/Spinner';
 
 interface AdminRouteProps {
@@ -11,7 +12,7 @@ interface AdminRouteProps {
 export default function AdminRoute({ children }: AdminRouteProps) {
   const { isSignedIn, user, isLoaded } = useUser();
 
-  const { data: profile, isLoading } = useQuery<any>({
+  const { data: profile, isLoading } = useQuery<Profile | null>({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;

@@ -110,7 +110,7 @@ function CourseFormModal({
         published: form.published,
       };
 
-      const table = supabase.from('courses') as any;
+      const table = supabase.from('courses');
       if (course) {
         await table.update(payload).eq('id', course.id);
       } else {
@@ -385,14 +385,14 @@ export default function AdminCourses() {
   };
 
   const togglePublished = async (course: Course) => {
-    await (supabase.from('courses') as any)
+    await supabase.from('courses')
       .update({ published: !course.published })
       .eq('id', course.id);
     invalidate();
   };
 
   const deleteCourse = async (course: Course) => {
-    await (supabase.from('courses') as any).delete().eq('id', course.id);
+    await supabase.from('courses').delete().eq('id', course.id);
     setConfirmDelete(null);
     invalidate();
   };
@@ -430,7 +430,7 @@ export default function AdminCourses() {
   );
 
   return (
-    <AdminLayout activePage={'courses' as any}>
+    <AdminLayout activePage={'courses'}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1

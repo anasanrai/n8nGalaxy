@@ -49,7 +49,7 @@ export default function SubmitWorkflow() {
     setSubmitting(true);
 
     try {
-      const { error: insertError } = await (supabase.from('submissions') as any).insert({
+      const { error: insertError } = await supabase.from('submissions').insert({
         user_id: user.id,
         title: title.trim(),
         description: description.trim(),
@@ -62,8 +62,8 @@ export default function SubmitWorkflow() {
       if (insertError) throw insertError;
 
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit workflow');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to submit workflow');
     } finally {
       setSubmitting(false);
     }

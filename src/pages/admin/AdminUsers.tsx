@@ -57,7 +57,7 @@ export default function AdminUsers() {
 
   const toggleRole = async (profile: Profile) => {
     const newRole = profile.role === 'admin' ? 'user' : 'admin';
-    await (supabase.from('profiles') as any).update({ role: newRole }).eq('id', profile.id);
+    await supabase.from('profiles').update({ role: newRole }).eq('id', profile.id);
   };
 
   const filtered = useMemo(() => {
