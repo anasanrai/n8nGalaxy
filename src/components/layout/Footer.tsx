@@ -24,29 +24,30 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-background border-t border-border py-12">
-      <div className="max-w-[1200px] mx-auto px-6 h-full flex flex-col md:flex-row justify-between w-full">
+    <footer className="bg-[#0a0a0f] border-t border-white/10 pt-16 pb-8 px-6 relative z-10">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between w-full">
         <div className="mb-12 md:mb-0 max-w-sm">
-          <NavLink to="/" className="flex items-center space-x-0 mb-4 inline-block">
-            <span className="font-sans font-medium text-text-secondary text-xl">n8n</span>
-            <span className="font-display font-extrabold text-primary text-xl">Galaxy</span>
+          <NavLink to="/" className="flex items-center mb-6">
+            <span className="font-sans font-bold text-white text-2xl">n8n</span>
+            <span className="font-display font-extrabold text-[#7c3aed] text-2xl ml-0.5">Galaxy</span>
           </NavLink>
-          <p className="font-sans font-normal text-[14px] text-text-tertiary mb-6">The n8n ecosystem hub</p>
-          <p className="font-sans font-normal text-[14px] text-text-tertiary">&copy; 2026 n8nGalaxy. All rights reserved.</p>
+          <p className="font-sans text-gray-400 mb-6 max-w-[250px]">
+            The premium n8n workflow marketplace for automation engineers.
+          </p>
         </div>
-        <div className="flex-1 max-w-[800px] grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex-1 max-w-3xl grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {Object.entries(links).map(([category, items]) => (
             <div key={category}>
-              <h3 className="font-sans font-medium text-[14px] text-text-primary mb-4">{category}</h3>
-              <ul className="space-y-3">
+              <h3 className="font-semibold text-white mb-6 uppercase tracking-wider text-sm">{category}</h3>
+              <ul className="space-y-4">
                 {items.map((item) => (
                   <li key={item.name}>
-                    {item.path === '#' ? (
-                      <span className="font-sans font-normal text-[14px] text-text-secondary cursor-not-allowed">{item.name}</span>
+                    {item.path === '#' || item.path === '/#' ? (
+                      <span className="text-gray-400 hover:text-white transition-colors cursor-pointer">{item.name}</span>
                     ) : (
                       <NavLink
                         to={item.path}
-                        className="font-sans font-normal text-[14px] text-text-secondary hover:text-text-primary transition-colors"
+                        className="text-gray-400 hover:text-white transition-colors"
                       >
                         {item.name}
                       </NavLink>
@@ -57,6 +58,11 @@ export default function Footer() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between">
+        <p className="text-gray-500 text-sm">
+          &copy; 2026 n8nGalaxy. All rights reserved.
+        </p>
       </div>
     </footer>
   );

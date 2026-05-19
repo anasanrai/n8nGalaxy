@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, BookOpen, Users, Zap, Search, CreditCard, Download } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -7,219 +6,148 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background text-text-primary overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans selection:bg-[#7c3aed] selection:text-white overflow-x-hidden relative">
       <Navbar />
 
-      <main>
-        {/* SECTION 1 - Hero */}
-        <section className="relative min-h-[calc(100vh-64px)] pt-[64px] flex items-center justify-center px-6"
-          style={{
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(0,229,199,0.04) 50%, rgba(13,13,20,1) 100%)'
-          }}
-        >
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.25) 0%, transparent 70%)'
-          }}></div>
+      {/* Global Background overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] z-0"></div>
 
-          <div className="relative z-10 w-full max-w-[720px] mx-auto text-center flex flex-col items-center">
+      <main className="relative z-10">
+        {/* HOMEPAGE HERO */}
+        <section className="relative pt-32 pb-24 md:pt-48 md:pb-32 flex items-center justify-center px-6 overflow-hidden">
+          {/* Gradient Orbs */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7c3aed]/20 rounded-full blur-[120px] pointer-events-none"></div>
+          <div className="absolute top-1/2 left-1/2 translate-x-[10%] -translate-y-[20%] w-[500px] h-[500px] bg-[#3b82f6]/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+          <div className="relative z-10 w-full max-w-4xl mx-auto text-center flex flex-col items-center">
+            {/* Badge */}
+            <div className="mb-8 inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+              <span className="text-[13px] font-medium text-gray-300">✦ The n8n Workflow Marketplace</span>
+            </div>
+
             {/* Headline */}
-            <h1 className="font-display font-extrabold text-[40px] md:text-[64px] leading-tight text-text-primary mb-6">
-              The n8n ecosystem
+            <h1 className="font-display font-bold text-5xl md:text-7xl leading-[1.1] tracking-tight mb-6">
+              Download. Automate.
               <br />
-              <span className="text-text-primary">hub for builders</span>
+              Ship <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7c3aed] to-[#3b82f6]">Faster.</span>
             </h1>
 
             {/* Subheadline */}
-            <p className="font-sans font-normal text-[18px] text-text-secondary max-w-[600px] mx-auto leading-relaxed mb-10">
-              Marketplace, learn, community, and pricing — everything you need to build and scale with n8n.
+            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10">
+              Production-ready n8n workflows built by automation engineers. Download JSON, import, done.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center mb-10">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center mb-10">
               <button
                 onClick={() => navigate('/marketplace')}
-                className="h-[48px] px-7 bg-primary hover:bg-primary-hover text-white font-sans font-medium text-[16px] rounded-input transition-colors cursor-pointer"
+                className="py-3 px-8 bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-medium rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(124,58,237,0.5)] hover:scale-[1.02] cursor-pointer"
               >
-                Browse Marketplace
+                Browse Workflows →
               </button>
               <button
                 onClick={() => navigate('/pricing')}
-                className="h-[48px] px-7 bg-surface border border-border hover:bg-border text-text-primary font-sans font-medium text-[16px] rounded-input transition-colors cursor-pointer"
+                className="py-3 px-8 bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
               >
                 View Pricing
               </button>
             </div>
 
-            {/* Trust markers */}
-            <div className="flex flex-wrap items-center justify-center gap-4 text-text-tertiary font-sans font-normal text-[13px]">
+            {/* Trust line */}
+            <div className="flex flex-wrap items-center justify-center gap-3 text-gray-500 text-sm">
               <span>No subscription required</span>
               <span className="hidden sm:inline">·</span>
-              <span>Cancel anytime</span>
+              <span>Instant download</span>
               <span className="hidden sm:inline">·</span>
-              <span>Instant delivery</span>
+              <span>Import-ready JSON</span>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2 - Stats bar */}
-        <section className="bg-surface border-y border-border py-8">
-          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x divide-border">
+        {/* STATS BAR */}
+        <section className="py-12 border-y border-white/5 bg-white/[0.02]">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x divide-white/5">
               {[
                 { number: '50+', label: 'Workflows' },
-                { number: '500+', label: 'Community Members' },
+                { number: '500+', label: 'Members' },
                 { number: '10+', label: 'Courses' },
-                { number: '100%', label: 'Satisfaction Rate' },
+                { number: 'Free', label: 'to start' },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col items-center justify-center text-center px-4">
-                  <span className="font-display font-extrabold text-[32px] text-text-primary mb-1">{stat.number}</span>
-                  <span className="font-sans font-normal text-[14px] text-text-secondary">{stat.label}</span>
+                  <span className="font-display font-bold text-3xl md:text-4xl text-white mb-2">{stat.number}</span>
+                  <span className="text-sm text-gray-400 font-medium uppercase tracking-wider">{stat.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SECTION 3 - Product cards */}
-        <section className="py-[96px] px-6 max-w-[1200px] mx-auto">
-          <div className="text-center w-full mb-16">
-            <span className="block font-sans font-medium text-[12px] text-primary tracking-[0.1em] uppercase mb-4">WHAT WE OFFER</span>
-            <h2 className="font-display font-extrabold text-[40px] text-text-primary mb-4">Four ways to build with n8n</h2>
-            <p className="font-sans font-normal text-[16px] text-text-secondary">Every product feeds the next.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-            {/* Card 1 - Marketplace */}
-            <div className="bg-surface border border-border rounded-card p-8 flex flex-col h-full items-start group">
-              <div className="w-12 h-12 rounded-xl border border-primary/20 bg-primary/10 flex items-center justify-center mb-6">
-                <ShoppingBag className="text-primary w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-[20px] text-text-primary mb-3">Workflow Marketplace</h3>
-              <p className="font-sans font-normal text-[15px] text-text-secondary leading-relaxed mb-6 flex-grow">
-                Buy production-ready n8n workflow templates. Real estate, sales, finance, AI agents. Download JSON, import, done.
-              </p>
-              <div className="flex items-center justify-between w-full mt-auto">
-                <span className="font-sans font-medium text-[13px] text-accent">From $29</span>
-                <button onClick={() => navigate('/marketplace')} className="font-sans font-medium text-[14px] text-primary hover:underline cursor-pointer flex items-center">
-                  Browse templates <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
-                </button>
-              </div>
+        {/* FEATURES SECTION "Why n8nGalaxy?" */}
+        <section className="py-24 px-6 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="inline-block text-[#7c3aed] text-sm font-semibold uppercase tracking-wider mb-3">Why n8nGalaxy?</span>
+              <h2 className="font-display font-bold text-3xl md:text-4xl text-white">Built for actual production.</h2>
             </div>
 
-            {/* Card 2 - Learn */}
-            <div className="bg-surface border border-border rounded-card p-8 flex flex-col h-full items-start group">
-              <div className="w-12 h-12 rounded-xl border border-primary/20 bg-primary/10 flex items-center justify-center mb-6">
-                <BookOpen className="text-primary w-6 h-6" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card 1 */}
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                <div className="text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">⚡</div>
+                <h3 className="text-xl font-bold text-white mb-3">Instant Import</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Download JSON, go to n8n, import. Done in 60 seconds.
+                </p>
               </div>
-              <h3 className="font-display font-bold text-[20px] text-text-primary mb-3">Learn & Courses</h3>
-              <p className="font-sans font-normal text-[15px] text-text-secondary leading-relaxed mb-6 flex-grow">
-                Step-by-step courses from beginner to advanced. Free and Pro tracks available.
-              </p>
-              <div className="flex items-center justify-between w-full mt-auto">
-                <span className="font-sans font-medium text-[13px] text-accent">Free & Pro</span>
-                <button onClick={() => navigate('/learn')} className="font-sans font-medium text-[14px] text-primary hover:underline cursor-pointer flex items-center">
-                  Start learning <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
-                </button>
-              </div>
-            </div>
 
-            {/* Card 3 - Community */}
-            <div className="bg-surface border border-border rounded-card p-8 flex flex-col h-full items-start group">
-              <div className="w-12 h-12 rounded-xl border border-primary/20 bg-primary/10 flex items-center justify-center mb-6">
-                <Users className="text-primary w-6 h-6" />
+              {/* Card 2 */}
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                <div className="text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">🛠</div>
+                <h3 className="text-xl font-bold text-white mb-3">Production-Ready</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Built and tested by real automation engineers. Not tutorial-quality.
+                </p>
               </div>
-              <h3 className="font-display font-bold text-[20px] text-text-primary mb-3">Community</h3>
-              <p className="font-sans font-normal text-[15px] text-text-secondary leading-relaxed mb-6 flex-grow">
-                Join Discord, follow on YouTube, connect on Twitter. The n8n builder network.
-              </p>
-              <div className="flex items-center justify-between w-full mt-auto">
-                <span className="font-sans font-medium text-[13px] text-accent">Free to join</span>
-                <button onClick={() => navigate('/community')} className="font-sans font-medium text-[14px] text-primary hover:underline cursor-pointer flex items-center">
-                  Join community <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
-                </button>
-              </div>
-            </div>
 
-            {/* Card 4 - Pricing (highlighted) */}
-            <div className="bg-surface border border-accent/25 rounded-card p-8 flex flex-col h-full items-start group relative shadow-[0_0_40px_rgba(0,229,199,0.05)]">
-              <div className="w-12 h-12 rounded-xl border border-accent/20 bg-accent/10 flex items-center justify-center mb-6">
-                <Zap className="text-accent w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-[20px] text-text-primary mb-3">Pro & Agency Plans</h3>
-              <p className="font-sans font-normal text-[15px] text-text-secondary leading-relaxed mb-6 flex-grow">
-                Unlock premium workflows, priority support, and advanced courses. Paddle-powered subscriptions.
-              </p>
-              <div className="flex items-center justify-between w-full mt-auto">
-                <span className="font-sans font-medium text-[13px] text-accent">From $29/mo</span>
-                <button onClick={() => navigate('/pricing')} className="font-sans font-medium text-[14px] text-primary hover:underline cursor-pointer flex items-center">
-                  See plans <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
-                </button>
+              {/* Card 3 */}
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group">
+                <div className="text-4xl mb-6 group-hover:scale-110 transition-transform origin-left">🔄</div>
+                <h3 className="text-xl font-bold text-white mb-3">All Niches</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Real estate, clinic, SMB, finance, HR. Every workflow has a use case.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4 - How it works */}
-        <section className="bg-surface py-[96px] px-6">
-          <div className="max-w-[1200px] mx-auto w-full">
-            <div className="text-center w-full mb-16">
-              <span className="block font-sans font-medium text-[12px] text-primary tracking-[0.1em] uppercase mb-4">HOW IT WORKS</span>
-              <h2 className="font-display font-extrabold text-[40px] text-text-primary mb-4">Three steps to ship</h2>
+        {/* HOW IT WORKS SECTION */}
+        <section className="py-24 px-6 bg-white/[0.02] border-t border-white/5">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="inline-block text-[#7c3aed] text-sm font-semibold uppercase tracking-wider mb-3">How it works</span>
+              <h2 className="font-display font-bold text-3xl md:text-4xl text-white">Three steps to live automation</h2>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 w-full relative">
-              {/* Dashed line connector behind items */}
-              <div className="hidden lg:block absolute top-[64px] left-[15%] right-[15%] h-[1px] border-t border-dashed border-border z-0"></div>
+            <div className="relative flex flex-col md:flex-row gap-12 md:gap-8 justify-between max-w-4xl mx-auto">
+              {/* Connecting Line */}
+              <div className="hidden md:block absolute top-[40px] left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
               {[
-                {
-                  icon: <Search className="w-8 h-8 text-primary" />,
-                  title: 'Browse',
-                  body: 'Find the perfect workflow template or course for your use case.'
-                },
-                {
-                  icon: <CreditCard className="w-8 h-8 text-primary" />,
-                  title: 'Purchase',
-                  body: 'One-time purchase or subscribe for unlimited access. Instant checkout.'
-                },
-                {
-                  icon: <Download className="w-8 h-8 text-primary" />,
-                  title: 'Build',
-                  body: 'Download the JSON, import into n8n, and start automating in minutes.'
-                }
-              ].map((step, i) => (
-                <div key={i} className="flex flex-col items-center flex-1 text-center relative z-10 bg-surface">
-                  <span className="font-sans font-medium text-[12px] text-primary mb-4 bg-surface px-2">0{i + 1}</span>
-                  <div className="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center mb-6">
-                    {step.icon}
+                { step: '1', title: 'Browse', desc: 'Find the workflow for your use case' },
+                { step: '2', title: 'Download', desc: 'Get the JSON file instantly' },
+                { step: '3', title: 'Import', desc: 'Paste into n8n and go live' },
+              ].map((item, i) => (
+                <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1">
+                  <div className="w-20 h-20 rounded-2xl bg-[#0a0a0f] border border-white/10 shadow-xl flex items-center justify-center mb-6 text-[#7c3aed] font-display font-bold text-2xl group-hover:border-[#7c3aed]/50 transition-colors">
+                    {item.step}
                   </div>
-                  <h3 className="font-display font-bold text-[18px] text-text-primary mb-3">{step.title}</h3>
-                  <p className="font-sans font-normal text-[14px] text-text-secondary leading-relaxed max-w-[280px]">
-                    {step.body}
-                  </p>
+                  <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-gray-400 max-w-[200px]">{item.desc}</p>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* SECTION 5 - CTA banner */}
-        <section className="py-[96px] px-6 w-full text-center">
-          <h2 className="font-display font-extrabold text-[48px] text-text-primary mb-4">Ready to build?</h2>
-          <p className="font-sans font-normal text-[18px] text-text-secondary mb-10">Start with a free workflow. No credit card needed.</p>
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
-            <button
-              onClick={() => navigate('/marketplace')}
-              className="h-[48px] px-7 bg-primary hover:bg-primary-hover text-white font-sans font-medium text-[16px] rounded-input transition-colors cursor-pointer"
-            >
-              Browse Marketplace
-            </button>
-            <button
-              onClick={() => navigate('/pricing')}
-              className="h-[48px] px-7 bg-surface border border-border hover:bg-border text-text-primary font-sans font-medium text-[16px] rounded-input transition-colors cursor-pointer"
-            >
-              View Pricing
-            </button>
           </div>
         </section>
       </main>

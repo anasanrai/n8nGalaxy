@@ -1,37 +1,16 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { UserButton, useUser, useClerk, ClerkLoaded, ClerkLoading, ClerkFailed } from '@clerk/clerk-react';
-import { Menu, X, Shield } from 'lucide-react';
+import { UserButton, useClerk, useUser, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { Menu, X, Shield, LayoutDashboard } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
-
-function useSafeUser() {
-  try {
-    return useUser();
-  } catch {
-    return { isSignedIn: false as const, user: null };
-  }
-}
-
-function useSafeClerk() {
-  try {
-    return useClerk();
-  } catch {
-    return null;
-  }
-}
-
-const btnBase = 'h-[36px] px-4 font-sans font-medium text-[14px] rounded-input transition-colors cursor-pointer';
-const btnOutline = 'text-text-primary border border-border hover:bg-surface';
-const btnPrimary = 'text-white bg-primary hover:bg-primary-hover border-none';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-
-  const { isSignedIn, user } = useSafeUser();
-  const clerk = useSafeClerk();
+  const { openSignIn, openSignUp } = useClerk();
+  const { user } = useUser();
 
   const { data: profile } = useQuery<any>({
     queryKey: ['profile', user?.id],
@@ -40,7 +19,7 @@ export default function Navbar() {
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
       return data ?? null;
     },
-    enabled: !!isSignedIn && !!user?.id,
+    enabled: !!user?.id,
   });
 
   useEffect(() => {
@@ -56,21 +35,16 @@ export default function Navbar() {
     { name: 'Pricing', path: '/pricing' },
   ];
 
-  const showLoggedOut = !isSignedIn;
-
-  const handleSignIn = () => clerk?.openSignIn({ afterSignInUrl: '/marketplace' });
-  const handleSignUp = () => clerk?.openSignUp({ afterSignUpUrl: '/marketplace' });
-
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 h-[64px] z-50 transition-colors duration-200 border-b border-border ${
-        scrolled ? 'bg-background/80 backdrop-blur-sm' : 'bg-background'
+      className={`fixed top-0 left-0 right-0 h-[64px] z-50 transition-all duration-300 border-b border-white/5 ${
+        scrolled ? 'bg-[#0a0a0f]/80 backdrop-blur-md' : 'bg-transparent'
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
         <NavLink to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
-          <span className="font-sans font-medium text-text-secondary">n8n</span>
-          <span className="font-display font-extrabold text-primary">Galaxy</span>
+          <span className="font-sans font-bold text-white text-xl">n8n</span>
+          <span className="font-display font-extrabold text-[#7c3aed] text-xl ml-0.5">Galaxy</span>
         </NavLink>
 
         <div className="hidden md:flex items-center gap-8">
@@ -80,7 +54,7 @@ export default function Navbar() {
               to={link.path}
               className={({ isActive }) =>
                 `font-sans font-medium text-[14px] transition-colors duration-150 ${
-                  isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'
+                  isActive ? 'text-white' : 'text-gray-400 hover:text-white'
                 }`
               }
             >
@@ -90,82 +64,66 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {showLoggedOut ? (
-            <ClerkLoading>
-              <div className="flex items-center gap-4">
-                <div className="w-[84px] h-[36px] rounded-input bg-surface/50 animate-pulse" />
-                <div className="w-[116px] h-[36px] rounded-input bg-surface/50 animate-pulse" />
-              </div>
-            </ClerkLoading>
-          ) : null}
-          {showLoggedOut ? (
-            <ClerkLoaded>
-              <button onClick={handleSignIn} className={`${btnBase} ${btnOutline}`}>Sign In</button>
-              <button onClick={handleSignUp} className={`${btnBase} ${btnPrimary}`}>Get Started</button>
-            </ClerkLoaded>
-          ) : null}
-          {showLoggedOut ? (
-            <ClerkFailed>
-              <button onClick={() => navigate('/signin')} className={`${btnBase} ${btnOutline}`}>Sign In</button>
-              <button onClick={() => navigate('/signup')} className={`${btnBase} ${btnPrimary}`}>Get Started</button>
-            </ClerkFailed>
-          ) : (
-            <ClerkLoaded>
-              <div className="relative group cursor-pointer">
-                <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: { width: 32, height: 32 },
-                        userButtonPopoverCard: { background: '#13131F', border: '1px solid #1E1E30' },
-                        userButtonPopoverActionButton: { color: '#F4F4F8' },
-                        userButtonPopoverActionButtonText: { color: '#F4F4F8' },
-                        userButtonPopoverFooter: { display: 'none' },
-                      },
-                    }}
-                  />
-                </div>
-                <div className="absolute right-0 mt-2 w-48 py-2 bg-surface border border-border rounded-card shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <button onClick={() => navigate('/dashboard')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Dashboard</button>
-                  <button onClick={() => navigate('/submit')} className="w-full text-left px-4 py-2 text-[14px] font-sans text-text-secondary hover:text-text-primary hover:bg-background transition-colors cursor-pointer">Submit Workflow</button>
-                  {profile?.role === 'admin' && (
-                    <button onClick={() => navigate('/admin')} className="w-full text-left px-4 py-2 text-[14px] font-sans hover:bg-background transition-colors cursor-pointer flex items-center gap-2" style={{ color: '#7C3AED' }}>
-                      <Shield size={13} />
-                      Admin Panel
-                    </button>
-                  )}
-                  <div className="my-1 border-t border-border"></div>
-                  <button onClick={() => clerk?.signOut()} className="w-full text-left px-4 py-2 text-[14px] font-sans text-danger hover:bg-background transition-colors cursor-pointer">Sign Out</button>
-                </div>
-              </div>
-            </ClerkLoaded>
-          )}
+          <SignedOut>
+            <button 
+              onClick={() => openSignIn()} 
+              className="px-4 py-2 font-sans font-medium text-[14px] text-gray-300 hover:text-white transition-colors cursor-pointer"
+            >
+              Sign In
+            </button>
+            <button 
+              onClick={() => openSignUp()} 
+              className="px-5 py-2 font-sans font-medium text-[14px] text-white bg-[#7c3aed] hover:bg-[#6d28d9] rounded-xl transition-colors cursor-pointer"
+            >
+              Get Started
+            </button>
+          </SignedOut>
+          <SignedIn>
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white transition-colors">
+                <LayoutDashboard size={20} />
+              </button>
+              {profile?.role === 'admin' && (
+                <button onClick={() => navigate('/admin')} className="text-[#7c3aed] hover:text-[#6d28d9] transition-colors">
+                  <Shield size={20} />
+                </button>
+              )}
+              <UserButton 
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: { width: 32, height: 32 },
+                  },
+                }}
+              />
+            </div>
+          </SignedIn>
         </div>
 
-        <button className="md:hidden text-text-secondary hover:text-text-primary" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button className="md:hidden text-gray-400 hover:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-[64px] left-0 right-0 bg-surface border-b border-border p-4 flex flex-col gap-4 shadow-2xl">
+        <div className="md:hidden absolute top-[64px] left-0 right-0 bg-[#0a0a0f] border-b border-white/5 p-4 flex flex-col gap-4 shadow-2xl">
           {navLinks.map((link) => (
-            <NavLink key={link.name} to={link.path} onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-input font-sans font-medium text-[15px] ${isActive ? 'bg-primary/10 text-primary' : 'text-text-secondary hover:bg-background hover:text-text-primary'}`}>
+            <NavLink key={link.name} to={link.path} onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl font-sans font-medium text-[15px] ${isActive ? 'bg-white/5 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
               {link.name}
             </NavLink>
           ))}
-          <div className="border-t border-border my-2"></div>
-          {showLoggedOut ? (
+          <div className="border-t border-white/5 my-2"></div>
+          <SignedOut>
             <div className="flex flex-col gap-3 px-2">
-              <button onClick={() => { setMobileMenuOpen(false); handleSignIn(); }} className="w-full h-[40px] font-sans font-medium text-[14px] text-text-primary rounded-input border border-border hover:bg-background transition-colors">Sign In</button>
-              <button onClick={() => { setMobileMenuOpen(false); handleSignUp(); }} className="w-full h-[40px] font-sans font-medium text-[14px] text-white bg-primary hover:bg-primary-hover rounded-input transition-colors">Get Started</button>
+              <button onClick={() => { setMobileMenuOpen(false); openSignIn(); }} className="w-full py-3 font-sans font-medium text-[14px] text-white rounded-xl border border-white/10 hover:bg-white/5 transition-colors">Sign In</button>
+              <button onClick={() => { setMobileMenuOpen(false); openSignUp(); }} className="w-full py-3 font-sans font-medium text-[14px] text-white bg-[#7c3aed] hover:bg-[#6d28d9] rounded-xl transition-colors">Get Started</button>
             </div>
-          ) : (
+          </SignedOut>
+          <SignedIn>
             <div className="flex flex-col gap-2">
-              <button onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }} className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary">Dashboard</button>
-              <button onClick={() => { setMobileMenuOpen(false); navigate('/submit'); }} className="block w-full text-left px-4 py-3 rounded-input font-sans font-medium text-[15px] text-text-secondary hover:bg-background hover:text-text-primary">Submit Workflow</button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }} className="block w-full text-left px-4 py-3 rounded-xl font-sans font-medium text-[15px] text-gray-400 hover:bg-white/5 hover:text-white">Dashboard</button>
+              <button onClick={() => { setMobileMenuOpen(false); navigate('/submit'); }} className="block w-full text-left px-4 py-3 rounded-xl font-sans font-medium text-[15px] text-gray-400 hover:bg-white/5 hover:text-white">Submit Workflow</button>
             </div>
-          )}
+          </SignedIn>
         </div>
       )}
     </nav>
