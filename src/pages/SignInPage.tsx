@@ -8,7 +8,7 @@ export default function SignInPage() {
         routing="path"
         path="/signin"
         signUpUrl="/signup"
-        forceRedirectUrl="/marketplace"
+        fallbackRedirectUrl="/dashboard"
         appearance={{
           baseTheme: dark,
           variables: {

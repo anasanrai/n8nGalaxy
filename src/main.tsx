@@ -12,7 +12,12 @@ if (!CLERK_KEY) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={CLERK_KEY!} afterSignOutUrl="/">
+    <ClerkProvider 
+      publishableKey={CLERK_KEY!} 
+      afterSignOutUrl="/"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/dashboard"
+    >
       <App />
     </ClerkProvider>
   </StrictMode>,
