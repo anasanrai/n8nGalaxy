@@ -1,11 +1,25 @@
+import { useEffect } from 'react';
 import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { syncClerkUserToSupabase } from '../lib/clerkSync';
 import type { Profile } from '../types';
 
 export function useAuth() {
   const { isSignedIn, user, isLoaded } = useUser();
   const { signOut: clerkSignOut } = useClerkAuth();
+
+  // Sync Clerk user to Supabase profiles table on sign-in
+  useEffect(() => {
+    if (isSignedIn && user) {
+      syncClerkUserToSupabase({
+        id: user.id,
+        primaryEmailAddress: user.primaryEmailAddress,
+        fullName: user.fullName,
+        imageUrl: user.imageUrl,
+      });
+    }
+  }, [isSignedIn, user?.id]);
 
   const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile', user?.id],

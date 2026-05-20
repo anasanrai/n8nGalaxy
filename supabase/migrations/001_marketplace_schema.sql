@@ -261,7 +261,7 @@ CREATE POLICY "Admins can manage site_settings"
   USING (auth.uid() IN (SELECT id FROM profiles WHERE role = 'admin'));
 
 -- Set initial admin (change the email to your admin email)
-UPDATE profiles SET role = 'admin' WHERE email = 'admin@n8ngalaxy.com';
+UPDATE profiles SET role = 'admin' WHERE email IN ('raianasan10@gmail.com', 'admin@n8ngalaxy.com');
 
 -- ── Drop old tables (uncomment after verifying migration) ────────────────────
 -- DROP TABLE IF EXISTS templates CASCADE;

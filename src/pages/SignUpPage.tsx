@@ -8,8 +8,7 @@ export default function SignUpPage() {
         routing="path"
         path="/signup"
         signInUrl="/signin"
-        afterSignInUrl="/marketplace"
-        afterSignUpUrl="/marketplace"
+        forceRedirectUrl="/marketplace"
         appearance={{
           baseTheme: dark,
           variables: {

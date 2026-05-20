@@ -109,14 +109,6 @@ export default function AdminOverview() {
         </h1>
       </div>
 
-      {/* Migration warning */}
-      <div
-        className="mb-6 rounded-xl px-5 py-3 text-sm"
-        style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#F59E0B' }}
-      >
-        Run the migration SQL in <code style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 12, background: 'rgba(0,0,0,0.2)', padding: '1px 4px', borderRadius: 4 }}>supabase/migrations/001_marketplace_schema.sql</code> to create all required tables.
-      </div>
-
       {/* Row 1: 4 cards */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <MetricCard

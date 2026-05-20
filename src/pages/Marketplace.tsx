@@ -253,7 +253,7 @@ export default function Marketplace() {
               return (
                 <div
                   key={w.id}
-                  onClick={() => navigate(`/template/${w.slug}`)}
+                  onClick={() => navigate(`/workflow/${w.slug}`)}
                   style={{
                     background: '#0D0D14',
                     padding: 24,
