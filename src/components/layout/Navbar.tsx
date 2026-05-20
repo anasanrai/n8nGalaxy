@@ -44,10 +44,12 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
-        <NavLink to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
-          <img src="/n8ngalaxy_logo.png" alt="n8nGalaxy" className="h-8 w-8 rounded-lg object-cover" />
-          <span className="font-sans font-bold text-white text-xl ml-2">n8n</span>
-          <span className="font-display font-extrabold text-[#7c3aed] text-xl ml-0.5">Galaxy</span>
+        <NavLink to="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
+            <img src="/n8ngalaxy_logo.png" alt="n8nGalaxy" className="w-7 h-7 object-contain" />
+          </div>
+          <span className="font-sans font-bold text-white text-xl">n8n</span>
+          <span className="font-display font-extrabold text-[#7c3aed] text-xl -ml-1">Galaxy</span>
         </NavLink>
 
         <div className="hidden md:flex items-center gap-8">
