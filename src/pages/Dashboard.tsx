@@ -4,8 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { ShoppingBag, BookOpen, Upload, User, CreditCard, ArrowUpRight, Loader2 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+
 import type { Purchase, Subscription, Submission, Workflow, Course } from '../types';
 
 type Tab = 'overview' | 'submissions' | 'account';
@@ -79,7 +78,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      <Navbar />
+
 
       <main className="flex-grow pt-[112px] pb-[96px] px-6 max-w-[1000px] w-full mx-auto">
         <h1 className="font-display font-extrabold text-[32px] text-text-primary mb-2">Dashboard</h1>
@@ -342,7 +341,7 @@ export default function Dashboard() {
         )}
       </main>
 
-      <Footer />
+
     </div>
   );
 }
