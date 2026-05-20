@@ -49,7 +49,7 @@ export default function SubmitWorkflow() {
     setSubmitting(true);
 
     try {
-      const { error: insertError } = await supabase.from('submissions').insert({
+      const { error: insertError } = await (supabase.from('submissions') as any).insert({
         user_id: user.id,
         title: title.trim(),
         description: description.trim(),
