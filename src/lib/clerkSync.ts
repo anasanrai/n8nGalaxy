@@ -1,6 +1,8 @@
 // Called after Clerk sign-in to ensure profile exists in Supabase
 import { supabase } from './supabase';
 
+const ADMIN_EMAILS = ['raianasan10@gmail.com', 'admin@n8ngalaxy.com'];
+
 export async function syncClerkUserToSupabase(clerkUser: {
   id: string;
   primaryEmailAddress?: { emailAddress: string } | null;
@@ -10,25 +12,37 @@ export async function syncClerkUserToSupabase(clerkUser: {
   const email = clerkUser.primaryEmailAddress?.emailAddress;
   if (!email) return;
 
-  const { error } = await (supabase.from('profiles') as any).upsert(
-    {
-      id: clerkUser.id,
-      email,
-      full_name: clerkUser.fullName ?? null,
-      avatar_url: clerkUser.imageUrl ?? null,
-    },
-    { onConflict: 'id', ignoreDuplicates: false }
-  );
+  const isAdmin = ADMIN_EMAILS.includes(email);
 
-  if (error) {
-    console.warn('Profile sync error:', error.message);
+  // Try to insert a new profile row. If it already exists, skip.
+  const { error: insertError } = await (supabase.from('profiles') as any).insert({
+    id: clerkUser.id,
+    email,
+    full_name: clerkUser.fullName ?? null,
+    avatar_url: clerkUser.imageUrl ?? null,
+    role: isAdmin ? 'admin' : 'user',
+  });
+
+  if (insertError && insertError.code !== '23505') {
+    // Not a duplicate key error — unexpected, log it
+    console.warn('Profile insert error:', insertError.message);
+    return;
   }
 
-  // After upsert, check if this email should be admin
-  const adminEmails = ['raianasan10@gmail.com', 'admin@n8ngalaxy.com'];
-  if (adminEmails.includes(email)) {
+  // Profile already existed — update non-role fields only, then promote if needed
+  if (insertError?.code === '23505') {
     await (supabase.from('profiles') as any)
-      .update({ role: 'admin' })
+      .update({
+        email,
+        full_name: clerkUser.fullName ?? null,
+        avatar_url: clerkUser.imageUrl ?? null,
+      })
       .eq('id', clerkUser.id);
+
+    if (isAdmin) {
+      await (supabase.from('profiles') as any)
+        .update({ role: 'admin' })
+        .eq('id', clerkUser.id);
+    }
   }
 }

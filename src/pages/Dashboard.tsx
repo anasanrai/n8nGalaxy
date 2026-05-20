@@ -18,6 +18,12 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [section, setSection] = useState<Section>('library');
 
+  // Redirect admin users to the admin panel
+  if (profile?.role === 'admin') {
+    navigate('/admin', { replace: true });
+    return null;
+  }
+
   const { data: purchases, isLoading: loadingPurchases } = useQuery({
     queryKey: ['dashboard-purchases', user?.id],
     queryFn: async () => {
