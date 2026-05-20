@@ -9,17 +9,17 @@ export default function Footer() {
       { name: 'Pricing', path: '/pricing' },
     ],
     Company: [
-      { name: 'About', path: '/#' },
-      { name: 'Blog', path: '/#' },
+      { name: 'About', path: '/about' },
+      { name: 'Blog', path: '/blog' },
     ],
     Legal: [
-      { name: 'Privacy', path: '/#' },
-      { name: 'Terms', path: '/#' },
+      { name: 'Privacy', path: '/privacy' },
+      { name: 'Terms', path: '/terms' },
     ],
     Connect: [
-      { name: 'Twitter/X', path: '#' },
-      { name: 'GitHub', path: '#' },
-      { name: 'Discord', path: '#' },
+      { name: 'Discord', path: 'https://discord.gg/n8ngalaxy', external: true },
+      { name: 'Twitter/X', path: 'https://twitter.com/n8ngalaxy', external: true },
+      { name: 'YouTube', path: 'https://youtube.com/@n8ngalaxy', external: true },
     ],
   };
 
@@ -42,8 +42,15 @@ export default function Footer() {
               <ul className="space-y-4">
                 {items.map((item) => (
                   <li key={item.name}>
-                    {item.path === '#' || item.path === '/#' ? (
-                      <span className="text-gray-400 hover:text-white transition-colors cursor-pointer">{item.name}</span>
+                    {'external' in item && item.external ? (
+                      <a
+                        href={item.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        {item.name}
+                      </a>
                     ) : (
                       <NavLink
                         to={item.path}
@@ -61,7 +68,7 @@ export default function Footer() {
       </div>
       <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between">
         <p className="text-gray-500 text-sm">
-          &copy; 2026 n8nGalaxy. All rights reserved.
+          &copy; 2026 n8nGalaxy. Built by Anasan Rai.
         </p>
       </div>
     </footer>

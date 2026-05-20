@@ -114,3 +114,26 @@ export interface SiteSetting {
   value: Record<string, unknown>;
   updated_at: string;
 }
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  category: string;
+  author_id: string | null;
+  featured_image_url: string | null;
+  published: boolean;
+  featured: boolean;
+  views: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NewsletterSignup {
+  id: string;
+  email: string;
+  source: string;
+  created_at: string;
+}

@@ -16,7 +16,12 @@ export default function AdminRoute({ children }: AdminRouteProps) {
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+      const email = user.primaryEmailAddress?.emailAddress ?? '';
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .or(`id.eq.${user.id},email.eq.${email}`)
+        .maybeSingle();
       return data ?? null;
     },
     enabled: !!isSignedIn && !!user?.id,

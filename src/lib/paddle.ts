@@ -5,8 +5,8 @@ let paddle: Paddle | undefined;
 export async function getPaddle(): Promise<Paddle> {
   if (paddle) return paddle;
   
-  const env = import.meta.env.VITE_PADDLE_ENVIRONMENT as 
-    'sandbox' | 'production' ?? 'production';
+  const env = (import.meta.env.VITE_PADDLE_ENVIRONMENT || 'production') as
+    'sandbox' | 'production';
   const token = import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
   
   console.log('Paddle init:', { env, token: token?.slice(0, 20) });

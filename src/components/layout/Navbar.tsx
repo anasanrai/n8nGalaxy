@@ -33,6 +33,7 @@ export default function Navbar() {
     { name: 'Marketplace', path: '/marketplace' },
     { name: 'Learn', path: '/learn' },
     { name: 'Community', path: '/community' },
+    { name: 'Blog', path: '/blog' },
     { name: 'Pricing', path: '/pricing' },
   ];
 

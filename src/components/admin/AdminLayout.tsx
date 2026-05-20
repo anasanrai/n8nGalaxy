@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
-import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut, FileText, Inbox } from 'lucide-react';
 
-type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue';
+type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue' | 'blog' | 'submissions';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -10,11 +10,13 @@ interface AdminLayoutProps {
 }
 
 const navItems: { page: ActivePage; label: string; icon: React.ReactNode; path: string }[] = [
-  { page: 'overview',  label: 'Overview',  icon: <LayoutDashboard size={16} />, path: '/admin' },
-  { page: 'workflows', label: 'Workflows', icon: <ShoppingBag size={16} />,     path: '/admin/workflows' },
-  { page: 'courses',   label: 'Courses',   icon: <BookOpen size={16} />,        path: '/admin/courses' },
-  { page: 'users',     label: 'Users',     icon: <Users size={16} />,           path: '/admin/users' },
-  { page: 'revenue',   label: 'Revenue',   icon: <DollarSign size={16} />,      path: '/admin/revenue' },
+  { page: 'overview',     label: 'Overview',     icon: <LayoutDashboard size={16} />, path: '/admin' },
+  { page: 'workflows',    label: 'Workflows',    icon: <ShoppingBag size={16} />,     path: '/admin/workflows' },
+  { page: 'courses',      label: 'Courses',      icon: <BookOpen size={16} />,        path: '/admin/courses' },
+  { page: 'blog',         label: 'Blog Posts',   icon: <FileText size={16} />,        path: '/admin/blog' },
+  { page: 'submissions',  label: 'Submissions',  icon: <Inbox size={16} />,           path: '/admin/submissions' },
+  { page: 'users',        label: 'Users',        icon: <Users size={16} />,           path: '/admin/users' },
+  { page: 'revenue',      label: 'Revenue',      icon: <DollarSign size={16} />,      path: '/admin/revenue' },
 ];
 
 export default function AdminLayout({ children, activePage }: AdminLayoutProps) {
@@ -32,18 +34,32 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
         className="fixed left-0 top-0 h-screen w-60 flex flex-col z-40"
         style={{ background: '#0D0D14', borderRight: '1px solid #1E1E30' }}
       >
-        <div className="px-5 py-6" style={{ borderBottom: '1px solid #1E1E30' }}>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, color: '#9CA3AF', fontSize: 18 }}>
-            n8n
-          </span>
+        <div className="px-5 py-6 flex items-center gap-3" style={{ borderBottom: '1px solid #1E1E30' }}>
+          <div>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, color: '#9CA3AF', fontSize: 18 }}>
+              n8n
+            </span>
+            <span
+              style={{ fontFamily: '"Syne", sans-serif', fontWeight: 800, color: '#7C3AED', fontSize: 18, marginLeft: 2 }}
+            >
+              Galaxy
+            </span>
+          </div>
           <span
-            style={{ fontFamily: '"Syne", sans-serif', fontWeight: 800, color: '#7C3AED', fontSize: 18, marginLeft: 2 }}
+            style={{
+              background: 'rgba(239,68,68,0.15)',
+              color: '#EF4444',
+              border: '1px solid rgba(239,68,68,0.3)',
+              borderRadius: 4,
+              fontSize: 10,
+              fontWeight: 700,
+              padding: '2px 6px',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
           >
-            Galaxy
+            ADMIN
           </span>
-          <p style={{ fontSize: 10, color: '#6B7280', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Admin
-          </p>
         </div>
 
         <div className="px-5 pt-5 pb-2">

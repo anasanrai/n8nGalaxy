@@ -15,13 +15,20 @@ import Dashboard from './pages/Dashboard';
 import WorkflowDetail from './pages/WorkflowDetail';
 import CourseDetail from './pages/CourseDetail';
 import SubmitWorkflow from './pages/SubmitWorkflow';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import About from './pages/About';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import AdminRoute from './components/admin/AdminRoute';
 
-const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
-const AdminWorkflows = lazy(() => import('./pages/admin/AdminWorkflows'));
-const AdminCourses = lazy(() => import('./pages/admin/AdminCourses'));
-const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
-const AdminRevenue = lazy(() => import('./pages/admin/AdminRevenue'));
+const AdminOverview    = lazy(() => import('./pages/admin/AdminOverview'));
+const AdminWorkflows   = lazy(() => import('./pages/admin/AdminWorkflows'));
+const AdminCourses     = lazy(() => import('./pages/admin/AdminCourses'));
+const AdminUsers       = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminRevenue     = lazy(() => import('./pages/admin/AdminRevenue'));
+const AdminBlog        = lazy(() => import('./pages/admin/AdminBlog'));
+const AdminSubmissions = lazy(() => import('./pages/admin/AdminSubmissions'));
 
 const queryClient = new QueryClient();
 
@@ -50,6 +57,11 @@ function App() {
           <Route path="/course/:slug" element={<CourseDetail />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/signin/*" element={<SignInPage />} />
@@ -127,6 +139,30 @@ function App() {
                 <AdminRoute>
                   <Suspense fallback={<AdminSpinner />}>
                     <AdminRevenue />
+                  </Suspense>
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blog"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Suspense fallback={<AdminSpinner />}>
+                    <AdminBlog />
+                  </Suspense>
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/submissions"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Suspense fallback={<AdminSpinner />}>
+                    <AdminSubmissions />
                   </Suspense>
                 </AdminRoute>
               </ProtectedRoute>
