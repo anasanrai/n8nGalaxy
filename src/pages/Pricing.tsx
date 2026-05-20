@@ -12,7 +12,7 @@ const plans = [
     price: '$29',
     period: '/month',
     description: 'For individual builders and freelancers.',
-    priceId: import.meta.env.VITE_PADDLE_PRO_PRICE_ID,
+    priceId: import.meta.env.VITE_PADDLE_PRO_PRICE_ID || import.meta.env.VITE_PADDLE_SANDBOX_PRO,
     features: [
       '50+ premium workflows',
       'Access to all courses',
@@ -29,7 +29,7 @@ const plans = [
     price: '$99',
     period: '/month',
     description: 'For teams and agencies shipping at scale.',
-    priceId: import.meta.env.VITE_PADDLE_AGENCY_PRICE_ID,
+    priceId: import.meta.env.VITE_PADDLE_AGENCY_PRICE_ID || import.meta.env.VITE_PADDLE_SANDBOX_AGENCY,
     features: [
       'Everything in Pro',
       '200+ premium workflows',
@@ -86,11 +86,8 @@ export default function Pricing() {
       });
     } catch (err: any) {
       console.error('Paddle checkout error:', err);
-      setCheckoutError(
-        err?.message?.includes('token')
-          ? 'Payment is not configured yet. Email hello@n8ngalaxy.com to get access.'
-          : 'Checkout failed — please try again or email hello@n8ngalaxy.com.'
-      );
+      const msg = err?.message || err?.toString() || 'Unknown error';
+      setCheckoutError(`Checkout error: ${msg} — email hello@n8ngalaxy.com if this persists.`);
     } finally {
       setLoadingPlan(null);
     }
