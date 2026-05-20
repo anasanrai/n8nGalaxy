@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
@@ -18,11 +18,12 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [section, setSection] = useState<Section>('library');
 
-  // Redirect admin users to the admin panel
-  if (profile?.role === 'admin') {
-    navigate('/admin', { replace: true });
-    return null;
-  }
+  // Redirect admin users to the admin panel once profile loads
+  useEffect(() => {
+    if (profile?.role === 'admin') {
+      navigate('/admin', { replace: true });
+    }
+  }, [profile?.role, navigate]);
 
   const { data: purchases, isLoading: loadingPurchases } = useQuery({
     queryKey: ['dashboard-purchases', user?.id],
