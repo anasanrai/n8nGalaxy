@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
-import { openPaddleCheckout } from '../lib/paddle';
 import { BookOpen, Check, ShieldCheck, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -63,26 +62,7 @@ export default function CourseDetail() {
       return;
     }
 
-    const priceId = course?.paddle_price_id;
-    if (!priceId) {
-      alert('Price not configured for this course');
-      return;
-    }
-    try {
-      await openPaddleCheckout({
-        priceId,
-        userId: user.id,
-        userEmail: user.email || '',
-        userName: profile?.full_name || '',
-        customData: {
-          user_id: user.id,
-          course_id: course?.id || '',
-          type: 'course',
-        },
-      });
-    } catch (err) {
-      console.error('Checkout error:', err);
-    }
+    navigate('/pricing');
   };
 
   const ds = course ? DIFFICULTY_STYLES[course.difficulty] || DIFFICULTY_STYLES.beginner : null;

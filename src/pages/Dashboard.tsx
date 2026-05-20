@@ -311,19 +311,11 @@ export default function Dashboard() {
                     {profile?.plan || 'free'}
                   </span>
                 </div>
-                {profile?.paddle_customer_id && (
-                  <div>
-                    <span className="font-sans font-medium text-[12px] text-text-tertiary uppercase tracking-wide">Paddle Customer ID</span>
-                    <p className="font-sans font-mono text-[13px] text-text-secondary mt-1 break-all">
-                      {profile.paddle_customer_id}
-                    </p>
-                  </div>
-                )}
                 <button
                   onClick={() => navigate('/pricing')}
                   className="h-[40px] px-5 bg-primary hover:bg-primary-hover text-white font-sans font-medium text-[14px] rounded-input transition-colors cursor-pointer mt-2"
                 >
-                  {profile?.plan === 'free' ? 'Upgrade Plan' : 'Manage Plan'}
+                  {profile?.plan === 'free' ? 'Upgrade Plan' : 'Manage Subscription'}
                 </button>
               </div>
             </div>
