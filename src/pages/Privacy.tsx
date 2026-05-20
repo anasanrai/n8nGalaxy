@@ -20,8 +20,8 @@ export default function Privacy() {
             <div>
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">2. Information We Collect</h2>
               <p className="mb-3"><strong className="text-text-primary">Account information.</strong> When you create an account we collect your email address, name, and profile picture via Clerk authentication. You may sign up with an email/password or a third-party OAuth provider (Google, GitHub).</p>
-              <p className="mb-3"><strong className="text-text-primary">Purchase information.</strong> When you purchase a workflow or subscription, Paddle processes your payment. We receive a transaction ID, the amount paid, and your email. We do not store raw card numbers or full payment credentials.</p>
-              <p className="mb-3"><strong className="text-text-primary">Usage information.</strong> We use PostHog to collect anonymous analytics about how you interact with the site — pages visited, clicks, session duration. This data does not personally identify you by default.</p>
+              <p className="mb-3"><strong className="text-text-primary">Purchase information.</strong> When paid purchases become available, payment will be processed by a third-party payment provider. We will receive a transaction ID, the amount paid, and your email. We do not store raw card numbers or full payment credentials.</p>
+              <p className="mb-3"><strong className="text-text-primary">Usage information.</strong> We may collect anonymous analytics about how you interact with the site — pages visited, clicks, session duration. This data does not personally identify you.</p>
               <p><strong className="text-text-primary">Submitted content.</strong> If you submit a workflow, we store the title, description, category, tags, and file you upload, linked to your account.</p>
             </div>
 
@@ -29,7 +29,7 @@ export default function Privacy() {
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">3. How We Use Your Information</h2>
               <ul className="list-disc list-inside space-y-2">
                 <li>To provide and operate the Service (authentication, purchases, downloads).</li>
-                <li>To process payments and send receipts via Paddle.</li>
+                <li>To process payments and send receipts (when payment processing is enabled).</li>
                 <li>To send transactional emails related to your account or purchases.</li>
                 <li>To improve the Service using aggregated analytics data.</li>
                 <li>To detect and prevent fraud or abuse.</li>
@@ -40,14 +40,13 @@ export default function Privacy() {
             <div>
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">4. Third-Party Services</h2>
               <p className="mb-3"><strong className="text-text-primary">Clerk</strong> — handles user authentication and stores your email and profile. See <a href="https://clerk.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">clerk.com/privacy</a>.</p>
-              <p className="mb-3"><strong className="text-text-primary">Supabase</strong> — stores your profile, purchases, submissions, and subscription data in a PostgreSQL database hosted on AWS. See <a href="https://supabase.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>.</p>
-              <p className="mb-3"><strong className="text-text-primary">Paddle</strong> — processes all payments as our Merchant of Record. Paddle handles PCI compliance, tax calculation, and payment data. See <a href="https://www.paddle.com/legal/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">paddle.com/legal/privacy</a>.</p>
-              <p><strong className="text-text-primary">PostHog</strong> — provides product analytics. Data is anonymized and used only in aggregate. See <a href="https://posthog.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">posthog.com/privacy</a>.</p>
+              <p className="mb-3"><strong className="text-text-primary">Supabase</strong> — stores your profile, submissions, and account data in a PostgreSQL database hosted on AWS. See <a href="https://supabase.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>.</p>
+              <p><strong className="text-text-primary">Vercel</strong> — hosts and serves the n8nGalaxy web application. See <a href="https://vercel.com/legal/privacy-policy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a>.</p>
             </div>
 
             <div>
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">5. Cookies</h2>
-              <p>We use cookies and similar technologies for authentication (Clerk session tokens), analytics (PostHog), and preferences. You can control cookies through your browser settings. Disabling cookies may affect functionality.</p>
+              <p>We use cookies and similar technologies for authentication (Clerk session tokens) and preferences. You can control cookies through your browser settings. Disabling cookies may affect functionality.</p>
             </div>
 
             <div>
@@ -63,7 +62,7 @@ export default function Privacy() {
 
             <div>
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">8. Security</h2>
-              <p>We use industry-standard security practices including HTTPS, row-level security in Supabase, and rely on Clerk and Paddle for secure credential and payment handling. No system is completely secure; we cannot guarantee absolute security.</p>
+              <p>We use industry-standard security practices including HTTPS, database security in Supabase, and rely on Clerk for secure authentication and credential handling. No system is completely secure; we cannot guarantee absolute security.</p>
             </div>
 
             <div>

@@ -5,6 +5,12 @@ import { MessageCircle, Video, Mail, ArrowUpRight, Loader2 } from 'lucide-react'
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
+interface FeaturedWorkflow {
+  title: string;
+  slug: string;
+  category: string;
+}
+
 const communityCards = [
   {
     icon: MessageCircle,
@@ -19,23 +25,17 @@ const communityCards = [
     title: 'YouTube Channel',
     description: 'Weekly tutorials, workflow breakdowns, and live build sessions. Subscribe for new automation content every week.',
     cta: 'Subscribe →',
-    href: 'https://youtube.com/@n8ngalaxy',
+    href: 'https://www.youtube.com/@Anasanbuild',
     primary: false,
   },
   {
     icon: Mail,
     title: 'Newsletter',
-    description: 'Weekly roundup of the best workflows, n8n tips, and community highlights. Join 1,000+ automation builders.',
+    description: 'Weekly roundup of the best workflows, n8n tips, and community highlights. Join automation builders from around the world.',
     cta: null,
     href: null,
     primary: false,
   },
-];
-
-const featuredWorkflows = [
-  { title: 'AI Lead Scoring with GPT-4', category: 'AI Agents', slug: 'ai-lead-scoring' },
-  { title: 'Slack → Linear Issue Creator', category: 'DevOps', slug: 'slack-linear' },
-  { title: 'Cold Email Personalizer', category: 'Sales', slug: 'cold-email-personalizer' },
 ];
 
 export default function Community() {
@@ -54,6 +54,19 @@ export default function Community() {
     },
   });
 
+  const { data: featuredWorkflows = [] } = useQuery<FeaturedWorkflow[]>({
+    queryKey: ['community-featured-workflows'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('workflows')
+        .select('title, slug, category')
+        .eq('published', true)
+        .eq('featured', true)
+        .limit(3);
+      return (data ?? []) as FeaturedWorkflow[];
+    },
+  });
+
   const handleNewsletterSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -64,7 +77,7 @@ export default function Community() {
         email,
         source: 'community',
       });
-      if (err && err.code !== '23505') throw err; // ignore duplicate
+      if (err && err.code !== '23505') throw err;
       setSubmitted(true);
     } catch {
       setError('Something went wrong. Please try again.');
@@ -73,11 +86,13 @@ export default function Community() {
     }
   };
 
+  const memberDisplay = memberCount && memberCount > 0 ? `${memberCount.toLocaleString()}+` : '500+';
+
   const stats = [
-    { value: memberCount ? `${memberCount.toLocaleString()}+` : '2,000+', label: 'Members' },
-    { value: '150+', label: 'Workflows Shared' },
-    { value: '50+', label: 'Tutorials' },
-    { value: '4', label: 'Office Hours/month' },
+    { value: memberDisplay, label: 'Members' },
+    { value: '50+', label: 'Workflows' },
+    { value: '10+', label: 'Courses' },
+    { value: '50+', label: 'Countries' },
   ];
 
   return (
@@ -130,7 +145,6 @@ export default function Community() {
                       {card.cta}
                     </a>
                   ) : (
-                    /* Newsletter inline form */
                     submitted ? (
                       <div className="h-[48px] flex items-center justify-center bg-success/10 border border-success/30 text-success rounded-input font-sans font-medium text-[14px]">
                         You're subscribed!
@@ -187,22 +201,31 @@ export default function Community() {
                 View all <ArrowUpRight className="w-4 h-4" />
               </a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {featuredWorkflows.map((w) => (
-                <a
-                  key={w.slug}
-                  href={`/workflow/${w.slug}`}
-                  className="bg-surface border border-border rounded-card p-6 hover:border-primary/40 transition-colors group"
-                >
-                  <span className="inline-flex items-center h-[20px] px-2 rounded-[4px] bg-primary/10 border border-primary/20 text-primary font-sans font-medium text-[11px] uppercase tracking-wide mb-4">
-                    {w.category}
-                  </span>
-                  <h3 className="font-display font-bold text-[17px] text-text-primary group-hover:text-primary transition-colors">
-                    {w.title}
-                  </h3>
+            {featuredWorkflows.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {featuredWorkflows.map((w) => (
+                  <a
+                    key={w.slug}
+                    href={`/workflow/${w.slug}`}
+                    className="bg-surface border border-border rounded-card p-6 hover:border-primary/40 transition-colors group"
+                  >
+                    <span className="inline-flex items-center h-[20px] px-2 rounded-[4px] bg-primary/10 border border-primary/20 text-primary font-sans font-medium text-[11px] uppercase tracking-wide mb-4">
+                      {w.category}
+                    </span>
+                    <h3 className="font-display font-bold text-[17px] text-text-primary group-hover:text-primary transition-colors">
+                      {w.title}
+                    </h3>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-text-secondary font-sans text-[15px]">
+                Workflows coming soon —{' '}
+                <a href="/marketplace" className="text-primary hover:text-primary-hover transition-colors">
+                  browse the marketplace
                 </a>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 

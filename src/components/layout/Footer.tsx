@@ -19,7 +19,7 @@ export default function Footer() {
     Connect: [
       { name: 'Discord', path: 'https://discord.gg/n8ngalaxy', external: true },
       { name: 'Twitter/X', path: 'https://twitter.com/n8ngalaxy', external: true },
-      { name: 'YouTube', path: 'https://youtube.com/@n8ngalaxy', external: true },
+      { name: 'YouTube', path: 'https://www.youtube.com/@Anasanbuild', external: true },
     ],
   };
 

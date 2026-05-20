@@ -30,9 +30,9 @@ export default function Terms() {
 
             <div>
               <h2 className="font-display font-bold text-[22px] text-text-primary mb-3">4. Purchases and Payments</h2>
-              <p className="mb-3">All purchases are processed by Paddle, our Merchant of Record. By completing a purchase you agree to Paddle's terms of service. Paddle handles payment processing, tax calculation, and compliance on our behalf.</p>
-              <p className="mb-3"><strong className="text-text-primary">Workflow purchases</strong> are one-time payments granting you a non-exclusive, non-transferable license to use the purchased workflow for your own or your clients' automation needs.</p>
-              <p><strong className="text-text-primary">Subscription plans</strong> grant access to premium content for the duration of the subscription. Subscriptions renew automatically unless cancelled before the renewal date.</p>
+              <p className="mb-3">Paid purchases are currently in development. When available, all purchases will be processed by a third-party payment provider. Details of the payment terms will be provided at the time of purchase.</p>
+              <p className="mb-3"><strong className="text-text-primary">Workflow purchases</strong> will be one-time payments granting you a non-exclusive, non-transferable license to use the purchased workflow for your own or your clients' automation needs.</p>
+              <p><strong className="text-text-primary">Subscription plans</strong> will grant access to premium content for the duration of the subscription. Subscriptions will renew automatically unless cancelled before the renewal date.</p>
             </div>
 
             <div>

@@ -3,9 +3,9 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const stats = [
-  { value: '500+', label: 'Workflows' },
-  { value: '2,000+', label: 'Members' },
-  { value: '15+', label: 'Courses' },
+  { value: '50+', label: 'Workflows' },
+  { value: '500+', label: 'Members' },
+  { value: '10+', label: 'Courses' },
   { value: '50+', label: 'Countries' },
 ];
 
@@ -89,7 +89,7 @@ export default function About() {
         <section className="py-[80px] px-6 text-center">
           <div className="max-w-[500px] mx-auto">
             <h2 className="font-display font-extrabold text-[32px] mb-4">Ready to automate?</h2>
-            <p className="font-sans text-[16px] text-text-secondary mb-8">Browse hundreds of production-ready n8n workflows or join the community of builders.</p>
+            <p className="font-sans text-[16px] text-text-secondary mb-8">Browse production-ready n8n workflows or join the community of builders.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate('/marketplace')}
