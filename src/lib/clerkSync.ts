@@ -24,8 +24,7 @@ export async function syncClerkUserToSupabase(clerkUser: {
   });
 
   if (insertError && insertError.code !== '23505') {
-    // Not a duplicate key error — unexpected, log it
-    console.warn('Profile insert error:', insertError.message);
+    console.error('[clerkSync] Profile insert failed:', insertError.code, insertError.message, insertError.details);
     return;
   }
 
