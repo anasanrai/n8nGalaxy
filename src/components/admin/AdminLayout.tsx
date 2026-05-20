@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
-import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut, FileText, Inbox } from 'lucide-react';
+import { LayoutDashboard, Users, DollarSign, ShoppingBag, BookOpen, LogOut, FileText, Inbox, Mail, Settings } from 'lucide-react';
 
-type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue' | 'blog' | 'submissions';
+type ActivePage = 'overview' | 'workflows' | 'courses' | 'users' | 'revenue' | 'blog' | 'submissions' | 'waitlist' | 'settings';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -17,6 +17,8 @@ const navItems: { page: ActivePage; label: string; icon: React.ReactNode; path: 
   { page: 'submissions',  label: 'Submissions',  icon: <Inbox size={16} />,           path: '/admin/submissions' },
   { page: 'users',        label: 'Users',        icon: <Users size={16} />,           path: '/admin/users' },
   { page: 'revenue',      label: 'Revenue',      icon: <DollarSign size={16} />,      path: '/admin/revenue' },
+  { page: 'waitlist',     label: 'Waitlist',     icon: <Mail size={16} />,            path: '/admin/waitlist' },
+  { page: 'settings',     label: 'Settings',     icon: <Settings size={16} />,        path: '/admin/settings' },
 ];
 
 export default function AdminLayout({ children, activePage }: AdminLayoutProps) {

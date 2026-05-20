@@ -29,6 +29,8 @@ const AdminUsers       = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminRevenue     = lazy(() => import('./pages/admin/AdminRevenue'));
 const AdminBlog        = lazy(() => import('./pages/admin/AdminBlog'));
 const AdminSubmissions = lazy(() => import('./pages/admin/AdminSubmissions'));
+const AdminWaitlist    = lazy(() => import('./pages/admin/AdminWaitlist'));
+const AdminSettings    = lazy(() => import('./pages/admin/AdminSettings'));
 
 const queryClient = new QueryClient();
 
@@ -163,6 +165,31 @@ function App() {
                 <AdminRoute>
                   <Suspense fallback={<AdminSpinner />}>
                     <AdminSubmissions />
+                  </Suspense>
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/waitlist"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Suspense fallback={<AdminSpinner />}>
+                    <AdminWaitlist />
+                  </Suspense>
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <Suspense fallback={<AdminSpinner />}>
+                    <AdminSettings />
                   </Suspense>
                 </AdminRoute>
               </ProtectedRoute>
