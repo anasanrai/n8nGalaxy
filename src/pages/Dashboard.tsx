@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { UserButton } from '@clerk/clerk-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { ShoppingBag, BookOpen, Upload, User, CreditCard, ArrowUpRight, Loader2 } from 'lucide-react';
@@ -79,25 +78,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      {/* Dashboard header */}
-      <header className="fixed top-0 left-0 right-0 h-[64px] z-50 flex items-center px-6 bg-[#0D0D14] border-b border-[#1E1E30]">
-        <div className="max-w-[1000px] w-full mx-auto flex items-center justify-between">
-          <NavLink to="/" className="flex items-center">
-            <span className="font-sans font-bold text-white text-xl">n8n</span>
-            <span className="font-display font-extrabold text-[#7c3aed] text-xl ml-0.5">Galaxy</span>
-          </NavLink>
-          <nav className="hidden md:flex items-center gap-8">
-            {[{ name: 'Marketplace', path: '/marketplace' }, { name: 'Learn', path: '/learn' }, { name: 'Community', path: '/community' }].map((l) => (
-              <NavLink key={l.name} to={l.path} className="font-sans font-medium text-[14px] text-gray-400 hover:text-white transition-colors">
-                {l.name}
-              </NavLink>
-            ))}
-          </nav>
-          <UserButton appearance={{ elements: { userButtonAvatarBox: { width: 32, height: 32 } } }} />
-        </div>
-      </header>
-
-      <main className="flex-grow pt-[112px] pb-[96px] px-6 max-w-[1000px] w-full mx-auto">
+      <main className="flex-grow pt-16 pb-24 px-6 max-w-[1000px] w-full mx-auto">
         <h1 className="font-display font-extrabold text-[32px] text-text-primary mb-2">Dashboard</h1>
         <p className="font-sans font-normal text-[16px] text-text-secondary mb-12">
           Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'there'}

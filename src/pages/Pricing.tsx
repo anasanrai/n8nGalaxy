@@ -56,6 +56,7 @@ export default function Pricing() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const handleSubscribe = async (plan: typeof plans[number]) => {
     if (!isAuthenticated) {
@@ -63,22 +64,33 @@ export default function Pricing() {
       return;
     }
 
+    if (!plan.priceId) {
+      setCheckoutError('This plan is not yet available for purchase. Email hello@n8ngalaxy.com to sign up.');
+      return;
+    }
+
     setLoadingPlan(plan.planKey);
+    setCheckoutError(null);
 
     try {
       await openPaddleCheckout({
         priceId: plan.priceId,
         userId: user!.id,
-        userEmail: user!.email!,
-        userName: user!.email || '',
+        userEmail: user!.email ?? '',
+        userName: user!.email ?? '',
         customData: {
           user_id: user!.id,
           plan: plan.planKey,
           source: 'pricing',
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Paddle checkout error:', err);
+      setCheckoutError(
+        err?.message?.includes('token')
+          ? 'Payment is not configured yet. Email hello@n8ngalaxy.com to get access.'
+          : 'Checkout failed — please try again or email hello@n8ngalaxy.com.'
+      );
     } finally {
       setLoadingPlan(null);
     }
@@ -106,6 +118,12 @@ export default function Pricing() {
 
         {/* Plans */}
         <section className="px-6 pb-24">
+          {checkoutError && (
+            <div className="max-w-[1000px] mx-auto mb-6 px-5 py-4 rounded-xl bg-danger/10 border border-danger/30 text-danger text-[14px] font-sans flex items-start justify-between gap-4">
+              <span>{checkoutError}</span>
+              <button onClick={() => setCheckoutError(null)} className="shrink-0 text-danger/60 hover:text-danger transition-colors cursor-pointer text-[18px] leading-none">×</button>
+            </div>
+          )}
           <div className="max-w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             {plans.map((plan) => {
               const isLoading = loadingPlan === plan.planKey;
