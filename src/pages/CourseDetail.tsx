@@ -57,6 +57,12 @@ export default function CourseDetail() {
       return;
     }
     if (purchase) return;
+
+    if (profile?.plan === 'free' && course && course.price_cents > 0) {
+      navigate('/pricing');
+      return;
+    }
+
     const priceId = course?.paddle_price_id;
     if (!priceId) {
       alert('Price not configured for this course');

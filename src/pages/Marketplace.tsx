@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Workflow } from '../types';
-import { useUser } from '@clerk/clerk-react';
-import { GitBranch } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { GitBranch, Lock } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -26,7 +26,7 @@ export default function Marketplace() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('Featured');
   const navigate = useNavigate();
-  const { isSignedIn } = useUser();
+  const { isAuthenticated, profile } = useAuth();
 
   const { data: workflows, isLoading } = useQuery({
     queryKey: ['workflows'],
@@ -197,7 +197,7 @@ export default function Marketplace() {
             ))}
           </select>
 
-          {isSignedIn ? (
+          {isAuthenticated ? (
             <div 
               style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E1E30', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#F4F4F8' }}
               onClick={() => navigate('/dashboard')}
@@ -290,19 +290,26 @@ export default function Marketplace() {
                     >
                       {w.category.replace(/_/g, ' ')}
                     </span>
-                    {w.featured && (
-                      <span
-                        style={{
-                          fontFamily: 'Inter, sans-serif',
-                          fontSize: 11,
-                          color: '#F59E0B',
-                          fontWeight: 500,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        ★ Featured
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {(!profile || profile.plan === 'free') && w.price_cents > 0 && (
+                        <span className="text-[#6B7280]" title="Premium workflow">
+                          <Lock size={12} />
+                        </span>
+                      )}
+                      {w.featured && (
+                        <span
+                          style={{
+                            fontFamily: 'Inter, sans-serif',
+                            fontSize: 11,
+                            color: '#F59E0B',
+                            fontWeight: 500,
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          ★ Featured
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <h3

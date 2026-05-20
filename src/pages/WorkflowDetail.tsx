@@ -66,6 +66,11 @@ export default function WorkflowDetail() {
       return;
     }
 
+    if (userProfile?.plan === 'free' && workflow && workflow.price_cents > 0) {
+      navigate('/pricing');
+      return;
+    }
+
     const priceId = workflow?.paddle_price_id;
     if (!priceId) {
       alert('Not configured for purchase');

@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Course } from '../types';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Lock } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import { useAuth } from '../hooks/useAuth';
 
 const DIFFICULTIES = ['All', 'Beginner', 'Intermediate', 'Advanced'] as const;
 
@@ -25,6 +26,7 @@ function difficultyStyle(difficulty: string) {
 export default function Learn() {
   const [activeDifficulty, setActiveDifficulty] = useState('All');
   const navigate = useNavigate();
+  const { profile } = useAuth();
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['courses'],
@@ -240,19 +242,26 @@ export default function Learn() {
                       >
                         {c.difficulty}
                       </span>
-                      {c.featured && (
-                        <span
-                          style={{
-                            fontFamily: 'Inter, sans-serif',
-                            fontSize: 11,
-                            color: '#F59E0B',
-                            fontWeight: 600,
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          ★ Featured
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {(!profile || profile.plan === 'free') && c.price_cents > 0 && (
+                          <span className="text-[#6B7280]" title="Premium course">
+                            <Lock size={12} />
+                          </span>
+                        )}
+                        {c.featured && (
+                          <span
+                            style={{
+                              fontFamily: 'Inter, sans-serif',
+                              fontSize: 11,
+                              color: '#F59E0B',
+                              fontWeight: 600,
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            ★ Featured
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Title */}

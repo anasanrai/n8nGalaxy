@@ -23,4 +23,12 @@ export async function syncClerkUserToSupabase(clerkUser: {
   if (error) {
     console.warn('Profile sync error:', error.message);
   }
+
+  // After upsert, check if this email should be admin
+  const adminEmails = ['raianasan10@gmail.com', 'admin@n8ngalaxy.com'];
+  if (adminEmails.includes(email)) {
+    await (supabase.from('profiles') as any)
+      .update({ role: 'admin' })
+      .eq('id', clerkUser.id);
+  }
 }
