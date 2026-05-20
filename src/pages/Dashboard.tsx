@@ -4,8 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { UserButton } from '@clerk/clerk-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 import {
   ShoppingBag, BookOpen, Upload, User,
   CreditCard, ArrowUpRight, Loader2, LogOut,
@@ -98,9 +96,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 pt-[64px]">
+      <main className="flex-1 pt-10">
         <div className="max-w-[1100px] mx-auto px-6 py-10 flex flex-col md:flex-row gap-8">
 
           {/* ── Left sidebar ── */}
@@ -394,8 +390,6 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
