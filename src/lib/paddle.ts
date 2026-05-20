@@ -2,30 +2,38 @@ import { initializePaddle, type Paddle } from '@paddle/paddle-js';
 
 let paddle: Paddle | undefined;
 
-export async function getPaddle(): Promise<Paddle> {
-  if (paddle) return paddle;
-
+async function buildPaddle(): Promise<Paddle> {
   const env = (import.meta.env.VITE_PADDLE_ENVIRONMENT || 'production') as
     'sandbox' | 'production';
   const token: string | undefined = import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
 
   if (!token) {
-    throw new Error('Paddle client token is not configured (VITE_PADDLE_CLIENT_TOKEN missing).');
+    throw new Error('VITE_PADDLE_CLIENT_TOKEN is not set.');
   }
-
-  // API keys (pdl_live_apikey_ / pdl_sdbx_apikey_) are backend-only.
-  // Client tokens must start with "live_" or "test_".
   if (!token.startsWith('live_') && !token.startsWith('test_')) {
     throw new Error(
-      `Invalid Paddle token format ("${token.slice(0, 18)}..."). ` +
-      'You need a client-side token (starts with "live_" or "test_"), not an API key. ' +
-      'Get it from Paddle Dashboard → Developer Tools → Authentication → Client-side tokens.'
+      `Paddle token "${token.slice(0, 12)}..." is a backend API key, not a client token. ` +
+      'Get a client-side token (starts with live_ or test_) from ' +
+      'Paddle Dashboard → Developer Tools → Authentication.'
     );
   }
 
-  paddle = await initializePaddle({ environment: env, token });
+  const instance = await initializePaddle({ environment: env, token });
 
-  if (!paddle) throw new Error('Paddle failed to initialize — check that the token matches the environment (live_ = production, test_ = sandbox).');
+  if (!instance) {
+    throw new Error(
+      'Paddle failed to initialize. Check: (1) token matches environment ' +
+      '(live_ = production, test_ = sandbox), (2) your Paddle account is ' +
+      'approved for live payments, (3) n8ngalaxy.com is in your Paddle approved domains.'
+    );
+  }
+
+  return instance;
+}
+
+export async function getPaddle(): Promise<Paddle> {
+  if (paddle) return paddle;
+  paddle = await buildPaddle();
   return paddle;
 }
 
@@ -36,16 +44,36 @@ export async function openPaddleCheckout(params: {
   userName: string;
   customData: Record<string, string>;
 }): Promise<void> {
-  const p = await getPaddle();
-  await p.Checkout.open({
-    items: [{ priceId: params.priceId, quantity: 1 }],
-    customer: { email: params.userEmail },
-    customData: params.customData,
-    settings: {
-      displayMode: 'overlay',
-      theme: 'dark',
-      locale: 'en',
-      successUrl: `${window.location.origin}/dashboard`,
-    },
-  });
+  let p: Paddle;
+  try {
+    p = await getPaddle();
+  } catch (err) {
+    paddle = undefined; // reset so next attempt reinitialises fresh
+    throw err;
+  }
+
+  try {
+    await p.Checkout.open({
+      items: [{ priceId: params.priceId, quantity: 1 }],
+      customer: { email: params.userEmail },
+      customData: params.customData,
+      settings: {
+        displayMode: 'overlay',
+        theme: 'dark',
+        locale: 'en',
+        successUrl: `${window.location.origin}/dashboard`,
+      },
+    });
+  } catch (err: any) {
+    paddle = undefined; // reset so next attempt reinitialises fresh
+    // Give a specific message for the checkoutFrontEndBase failure
+    if (err?.message?.includes('checkoutFrontEndBase')) {
+      throw new Error(
+        'Paddle checkout config missing. Your Paddle account may not be approved ' +
+        'for live payments yet, or n8ngalaxy.com is not in your allowed domains. ' +
+        'Check Paddle Dashboard → Checkout → Allowed Domains.'
+      );
+    }
+    throw err;
+  }
 }
