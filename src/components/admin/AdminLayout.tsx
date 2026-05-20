@@ -37,6 +37,7 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
         style={{ background: '#0D0D14', borderRight: '1px solid #1E1E30' }}
       >
         <div className="px-5 py-6 flex items-center gap-3" style={{ borderBottom: '1px solid #1E1E30' }}>
+          <img src="/n8ngalaxy_logo.png" alt="n8nGalaxy" style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div>
             <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, color: '#9CA3AF', fontSize: 18 }}>
               n8n

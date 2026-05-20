@@ -27,7 +27,8 @@ export default function Footer() {
     <footer className="bg-[#0a0a0f] border-t border-white/10 pt-16 pb-8 px-6 relative z-10">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between w-full">
         <div className="mb-12 md:mb-0 max-w-sm">
-          <NavLink to="/" className="flex items-center mb-6">
+          <NavLink to="/" className="flex items-center gap-2.5 mb-6">
+            <img src="/n8ngalaxy_logo.png" alt="n8nGalaxy" className="h-9 w-9 rounded-xl object-cover" />
             <span className="font-sans font-bold text-white text-2xl">n8n</span>
             <span className="font-display font-extrabold text-[#7c3aed] text-2xl ml-0.5">Galaxy</span>
           </NavLink>

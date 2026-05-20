@@ -45,7 +45,8 @@ export default function Navbar() {
     >
       <div className="max-w-[1200px] mx-auto px-6 h-full flex items-center justify-between">
         <NavLink to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
-          <span className="font-sans font-bold text-white text-xl">n8n</span>
+          <img src="/n8ngalaxy_logo.png" alt="n8nGalaxy" className="h-8 w-8 rounded-lg object-cover" />
+          <span className="font-sans font-bold text-white text-xl ml-2">n8n</span>
           <span className="font-display font-extrabold text-[#7c3aed] text-xl ml-0.5">Galaxy</span>
         </NavLink>
 
